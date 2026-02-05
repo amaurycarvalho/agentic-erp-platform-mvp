@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+
+  agent-service:
+    build:
+      context: ./services/agent-service
+      dockerfile: Dockerfile
+    container_name: agent-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - erp-acl-service
+      - mcp-service
+      - rag-service
+    networks:
+      - agentic-network
+
+  erp-acl-service:
+    build:
+      context: ./services/erp-acl-service
+      dockerfile: Dockerfile
+    container_name: erp-acl-service
+    ports:
+      - "8081:8081"
+    networks:
+      - agentic-network
+
+  mcp-service:
+    build:
+      context: ./services/mcp-service
+      dockerfile: Dockerfile
+    container_name: mcp-service
+    ports:
+      - "8082:8082"
+    networks:
+      - agentic-network
+
+  rag-service:
+    build:
+      context: ./services/rag-service
+      dockerfile: Dockerfile
+    container_name: rag-service
+    ports:
+      - "8083:8083"
+    networks:
+      - agentic-network
+
+networks:
+  agentic-network:
+    driver: bridge
+
