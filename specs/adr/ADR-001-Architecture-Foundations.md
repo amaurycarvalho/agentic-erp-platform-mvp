@@ -27,7 +27,9 @@ Adotar as seguintes abordagens arquiteturais como **fundação do projeto**:
 4. **C# / .NET como plataforma principal**;
 5. **Strangler Pattern para evolução do legado**;
 6. **Spec Driven Development (SDD) como prática central**;
-7. **IA Agêntica com MCP e RAG desacoplados**.
+7. **IA Agêntica com MCP e RAG desacoplados**;
+8. **TDD e BDD**;
+9. **Containers docker por serviço gerenciados por docker-compose**.
 
 ---
 
@@ -118,6 +120,16 @@ A IA é tratada como:
 MCP define claramente o que a IA pode fazer.
 RAG fornece contexto confiável para decisões.
 O ERP permanece protegido por uma ACL dedicada.
+
+---
+
+## 8. TDD e BDD
+
+TDD (Test-Driven Development) e BDD (Behavior-Driven Development) aumentam a qualidade do software, reduzem bugs e facilitam a manutenção através de testes automatizados. O TDD foca na qualidade do código unitário e refatoração segura (dentro para fora), enquanto o BDD alinha regras de negócio a cenários de comportamento compreensíveis por todos, garantindo que a funcionalidade correta seja desenvolvida (fora para dentro). 
+
+## 9. Containers docker por serviço gerenciados por docker-compose
+
+Containers Docker oferecem alta portabilidade, padronização entre ambientes (eliminando o "funciona na minha máquina"), rapidez na implantação e escalabilidade eficiente. Leves e isolados, consomem menos recursos (CPU/RAM) que máquinas virtuais, facilitando o desenvolvimento, CI/CD e a execução de microsserviços com segurança e agilidade. 
 
 ---
 

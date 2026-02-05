@@ -1,19 +1,21 @@
 # Glossary
 
-## ERP Legado
-Sistema corporativo existente responsável por cálculos contábeis, fiscais e persistência transacional.
+## Geral
 
-## IA Agêntica
-Modelo de IA que interpreta intenção, planeja ações e orquestra fluxos.
+- ERP Legado: Sistema corporativo existente responsável por cálculos contábeis, fiscais e persistência transacional.
 
-## MCP
-Model Context Protocol. Contrato explícito de capacidades disponíveis para a IA.
+- IA Agêntica: Modelo de IA que interpreta intenção, planeja ações e orquestra fluxos.
 
-## RAG
-Retrieval-Augmented Generation. Fonte controlada de conhecimento contextual.
+- MCP: Model Context Protocol. Contrato explícito de capacidades disponíveis para a IA.
 
-## ACL
-Anti-Corruption Layer. Camada que protege e traduz o ERP.
+- RAG: Retrieval-Augmented Generation. Fonte controlada de conhecimento contextual.
 
-## Spec
-Documento que define comportamento esperado antes de qualquer implementação.
+- ACL: Anti-Corruption Layer. Camada que protege e traduz o ERP.
+
+- Spec: Documento que define comportamento esperado antes de qualquer implementação.
+
+## Termos do domínio
+
+- Order: Representa uma intenção confirmada de compra. NÃO usar: Purchase, Sale, Transaction.
+
+
