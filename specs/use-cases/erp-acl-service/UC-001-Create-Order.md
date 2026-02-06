@@ -15,14 +15,14 @@
 
 ## Cenários de Teste
 
-### CT-001: Criar pedido válido
+### TS-001: Criar pedido válido
 **Dado** que existe um cliente válido  
 **E** o valor total do pedido é maior que zero  
 **Quando** o agente solicitar a criação do pedido  
 **Então** o pedido deve ser criado no ERP  
 **E** um identificador de pedido deve ser retornado.
 
-### CT-002: Criar pedido com valor inválido
+### TS-002: Criar pedido com valor inválido
 **Dado** que o valor total do pedido é zero  
 **Quando** o agente solicitar a criação do pedido  
 **Então** o sistema deve rejeitar a operação  

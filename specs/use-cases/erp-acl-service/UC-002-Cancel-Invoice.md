@@ -16,20 +16,20 @@
 
 ## Cenários de Teste
 
-### CT-001: Cancelar nota fiscal existente
+### TS-001: Cancelar nota fiscal existente
 **Dado** que existe uma nota fiscal válida  
 **E** a nota fiscal não está cancelada  
 **E** foi informado um motivo de cancelamento  
 **Quando** o agente solicitar o cancelamento  
 **Então** a nota fiscal deve ser marcada como cancelada no ERP.
 
-### CT-002: Cancelar nota fiscal já cancelada
+### TS-002: Cancelar nota fiscal já cancelada
 **Dado** que a nota fiscal já está cancelada  
 **Quando** o agente solicitar o cancelamento  
 **Então** o sistema deve rejeitar a operação  
 **E** informar que a nota fiscal já foi cancelada.
 
-### CT-003: Cancelar nota fiscal sem motivo
+### TS-003: Cancelar nota fiscal sem motivo
 **Dado** que existe uma nota fiscal válida  
 **Quando** o agente solicitar o cancelamento sem informar o motivo  
 **Então** o sistema deve rejeitar a operação  

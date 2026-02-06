@@ -30,12 +30,14 @@ Este padrão se aplica a todos os serviços do projeto e é obrigatório para no
 
 ## Expectativas mínimas de testes
 
-- Cada caso de uso deverá ter pelo menos 1 caso de teste mapeado em formato BDD;
-- Todos os casos de testes, exceto os marcados como exploratórios, deverão ter testes automatizados implementados;
-- Todo endpoint deverá ter pelo menos um teste unitário associado;
-- Cobertura de 100% de testes unitários em código de alta criticidade;
-- Cobertura de 90% de testes unitários em código de média criticidade;
-- Cobertura de 50% de testes unitários em código de baixa criticidade.
+- Cada caso de uso deverá ter pelo menos 1 cenário de teste mapeado em formato BDD;
+- Todos os cenários de testes, exceto os marcados como exploratórios, deverão ter testes automatizados implementados.
+
+- TDD:
+    - Todo endpoint deverá ter pelo menos um teste unitário associado;
+    - Cobertura de 100% de testes unitários em código de alta criticidade;
+    - Cobertura de 90% de testes unitários em código de média criticidade;
+    - Cobertura de 50% de testes unitários em código de baixa criticidade.
 
 ## Tecnologia
 
