@@ -7,13 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Grpc.Tools" Version="2.78.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.23" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.63.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ErpAcl.Application\ErpAcl.Application.csproj" />
     <ProjectReference Include="..\ErpAcl.Infrastructure\ErpAcl.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\erp_acl.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

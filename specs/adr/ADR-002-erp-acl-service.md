@@ -26,3 +26,28 @@ Adotar as seguintes abordagens arquiteturais para o serviço ACL do ERP:
 
 Os endpoints da camada ACL do ERP serão de consumo exclusivo do servidor MCP, exigindo máxima eficiencia e gestão minuciosa dos contratos envolvidos.
 
+---
+
+## Comunicação entre Serviços
+
+O serviço ERP ACL expõe seus casos de uso por meio de endpoints gRPC.
+Essa decisão foi tomada para garantir:
+
+- Contratos fortemente tipados entre os serviços;
+- Limites técnicos claros, alinhados ao padrão ACL (Anti-Corruption Layer);
+- Comunicação interna de baixa latência;
+- Arquivos proto atuando como especificações executáveis dos contratos.
+
+## Endpoints Expostos
+
+- OrderService.CreateOrder
+    - Cria um novo pedido no sistema ERP por meio da camada ACL;
+    - Mapeia diretamente o UC-001 (Create Order).
+- InvoiceService.CancelInvoice
+    - Cancela uma fatura existente no sistema ERP;
+    - Mapeia diretamente o UC-002 (Cancel Invoice).
+
+Os contratos gRPC são definidos na camada API do serviço ERP ACL e são
+considerados parte da interface interna pública do serviço para comunicação
+com outros microserviços da plataforma.
+
