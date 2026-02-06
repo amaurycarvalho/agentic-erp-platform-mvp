@@ -18,7 +18,7 @@ Se não está especificado aqui, **não faz parte do sistema**.
 
 ## Estrutura do projeto
 
-- /specs: Fonte de verdade para comportamento, decisões e planejamento;
+- /specs: Referencia para comportamento, decisões e planejamento;
 - /services: Implementações dos serviços descritos nas specs;
 - /services/<serviço>/src: Código fonte do serviço;
 - /services/<serviço>/tests: Testes unitários do serviço;

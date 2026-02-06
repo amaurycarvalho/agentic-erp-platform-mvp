@@ -50,7 +50,7 @@ Adotar as seguintes abordagens arquiteturais como **fundação do projeto**:
 7. **IA Agêntica com MCP e RAG desacoplados**;
 8. **Histórias de usuário, TDD e BDD**;
 9. **Containers docker por serviço gerenciados por docker-compose**;
-10. **Endpoints BBF nos padrões REST e GRPC**.
+10. **Endpoints BFF nos padrões REST e GRPC**.
 
 ---
 
@@ -140,9 +140,9 @@ TDD (Test-Driven Development) e BDD (Behavior-Driven Development) aumentam a qua
 
 Containers Docker oferecem alta portabilidade, padronização entre ambientes (eliminando o "funciona na minha máquina"), rapidez na implantação e escalabilidade eficiente. Leves e isolados, consomem menos recursos (CPU/RAM) que máquinas virtuais, facilitando o desenvolvimento, CI/CD e a execução de microsserviços com segurança e agilidade.
 
-## 10. Endpoints BBF nos padrões REST e GRPC
+## 10. Endpoints BFF nos padrões REST e GRPC
 
-No Backend for Frontend (BBF) um serviço de backend dedicado é criado especificamente para atender a um frontend consumidor único. Em vez de todos os clientes consumirem uma única API genérica e monolítica, cada frontend se comunica com o seu próprio BFF, que por sua vez se comunica com os microsserviços principais do sistema.
+No Backend for Frontend (BFF) um serviço de backend dedicado é criado especificamente para atender a um frontend consumidor único. Em vez de todos os clientes consumirem uma única API genérica e monolítica, cada frontend se comunica com o seu próprio BFF, que por sua vez se comunica com os microsserviços principais do sistema.
 
 A escolha entre REST (Representational State Transfer) e gRPC (Google Remote Procedure Call) depende dos requisitos de desempenho, facilidade de uso e do ambiente de execução da aplicação. REST é o padrão amplamente adotado para web, enquanto o gRPC se destaca em sistemas de alto desempenho e microsserviços.
 
