@@ -1,4 +1,5 @@
 # ADR-001 – Arquitetura Base do agentic-erp-platform-mvp
+---
 
 ## Status
 Aceito
@@ -8,12 +9,31 @@ Aceito
 Este projeto tem como objetivo demonstrar, em formato MVP, como modernizar a utilização de um ERP legado por meio de IA agêntica, reduzindo riscos, preservando o núcleo do sistema e permitindo evolução incremental.
 
 O cenário considerado envolve:
+
 - ERP crítico e intocável;
 - Regras de negócio distribuídas e pouco documentadas;
 - Forte dependência de decisões humanas;
 - Necessidade de automação com governança, auditabilidade e baixo acoplamento.
 
 Diante desse contexto, foi necessário definir uma base arquitetural sólida, compreensível por líderes técnicos e de negócio, e sustentável a longo prazo.
+
+---
+
+## Estrutura geral da solução
+
+```
+agentic-erp-platform-mvp
+|
++--agent-service
+   |
+   +--rag-service
+   |
+   +--mcp-service
+      |
+      +--erp-acl-service
+         |
+         +--erp
+```
 
 ---
 
@@ -28,8 +48,9 @@ Adotar as seguintes abordagens arquiteturais como **fundação do projeto**:
 5. **Strangler Pattern para evolução do legado**;
 6. **Spec Driven Development (SDD) como prática central**;
 7. **IA Agêntica com MCP e RAG desacoplados**;
-8. **TDD e BDD**;
-9. **Containers docker por serviço gerenciados por docker-compose**.
+8. **Histórias de usuário, TDD e BDD**;
+9. **Containers docker por serviço gerenciados por docker-compose**;
+10. **Endpoints REST e GRPC**.
 
 ---
 
@@ -47,8 +68,6 @@ DDD é adotado para:
 
 O domínio passa a ser a principal referência, não o banco ou o ERP.
 
----
-
 ### 2. Clean Architecture
 
 Clean Architecture é utilizada para garantir que:
@@ -57,8 +76,6 @@ Clean Architecture é utilizada para garantir que:
 - O sistema seja testável e evolutivo.
 
 Isso é essencial em um cenário onde tecnologias de IA e ERPs podem mudar ao longo do tempo.
-
----
 
 ### 3. Microserviços
 
@@ -70,8 +87,6 @@ A solução é organizada em microserviços para:
 
 Cada microserviço representa uma capacidade clara de negócio ou plataforma.
 
----
-
 ### 4. C# / .NET
 
 C# e .NET foram escolhidos por:
@@ -82,8 +97,6 @@ C# e .NET foram escolhidos por:
 - Alta produtividade para times enterprise.
 
 A escolha privilegia clareza, segurança e sustentabilidade.
-
----
 
 ### 5. Strangler Pattern
 
@@ -97,8 +110,6 @@ O Strangler Pattern permite:
 
 A IA agêntica atua como camada externa que “envolve” o ERP.
 
----
-
 ### 6. Spec Driven Development (SDD)
 
 SDD é adotado para:
@@ -108,8 +119,6 @@ SDD é adotado para:
 - Guiar código, prompts, testes e contratos.
 
 Nenhuma funcionalidade existe sem uma spec explícita.
-
----
 
 ### 7. IA Agêntica com MCP e RAG
 
@@ -121,15 +130,22 @@ MCP define claramente o que a IA pode fazer.
 RAG fornece contexto confiável para decisões.
 O ERP permanece protegido por uma ACL dedicada.
 
----
+## 8. Histórias de usuário, TDD e BDD
 
-## 8. TDD e BDD
+Histórias de usuário (user stories) trazem como principais vantagens o foco no valor para o usuário final, melhor colaboração entre as equipes, flexibilidade para mudanças e facilidade de entendimento. Elas simplificam requisitos técnicos, tornando-os claros e concisos, permitindo entregas mais rápidas, contínuas e alinhadas às reais necessidades do cliente.
 
-TDD (Test-Driven Development) e BDD (Behavior-Driven Development) aumentam a qualidade do software, reduzem bugs e facilitam a manutenção através de testes automatizados. O TDD foca na qualidade do código unitário e refatoração segura (dentro para fora), enquanto o BDD alinha regras de negócio a cenários de comportamento compreensíveis por todos, garantindo que a funcionalidade correta seja desenvolvida (fora para dentro). 
+TDD (Test-Driven Development) e BDD (Behavior-Driven Development) aumentam a qualidade do software, reduzem bugs e facilitam a manutenção através de testes automatizados. O TDD foca na qualidade do código unitário e refatoração segura (dentro para fora), enquanto o BDD alinha regras de negócio a cenários de comportamento compreensíveis por todos, garantindo que a funcionalidade correta seja desenvolvida (fora para dentro).
 
 ## 9. Containers docker por serviço gerenciados por docker-compose
 
-Containers Docker oferecem alta portabilidade, padronização entre ambientes (eliminando o "funciona na minha máquina"), rapidez na implantação e escalabilidade eficiente. Leves e isolados, consomem menos recursos (CPU/RAM) que máquinas virtuais, facilitando o desenvolvimento, CI/CD e a execução de microsserviços com segurança e agilidade. 
+Containers Docker oferecem alta portabilidade, padronização entre ambientes (eliminando o "funciona na minha máquina"), rapidez na implantação e escalabilidade eficiente. Leves e isolados, consomem menos recursos (CPU/RAM) que máquinas virtuais, facilitando o desenvolvimento, CI/CD e a execução de microsserviços com segurança e agilidade.
+
+## 10. Endpoints REST e GRPC
+
+A escolha entre REST (Representational State Transfer) e gRPC (Google Remote Procedure Call) depende dos requisitos de desempenho, facilidade de uso e do ambiente de execução da aplicação. REST é o padrão amplamente adotado para web, enquanto o gRPC se destaca em sistemas de alto desempenho e microsserviços.
+
+- REST é a escolha ideal para APIs públicas, front-end web e aplicações onde a simplicidade é mais importante que o desempenho extremo;
+- gRPC é projetado para eficiência, sendo ideal para comunicação interna entre microsserviços e sistemas com baixa latência.
 
 ---
 
