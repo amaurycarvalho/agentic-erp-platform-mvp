@@ -2,6 +2,8 @@
 
 Este documento define os princípios imutáveis do sistema.
 
+---
+
 ## Princípios gerais
 
 1. O ERP legado é um sistema estável e intocável;
@@ -14,7 +16,11 @@ Este documento define os princípios imutáveis do sistema.
 
 Estes princípios não são opcionais.
 
-## Padrão de Especificação de Casos de Uso
+---
+
+## Backlog
+
+### Padrão de Especificação de Casos de Uso
 
 Todos os casos de uso deste projeto devem ser escritos seguindo uma abordagem em camadas:
 
@@ -28,16 +34,12 @@ Todos os casos de uso deste projeto devem ser escritos seguindo uma abordagem em
 
 Este padrão se aplica a todos os serviços do projeto e é obrigatório para novas funcionalidades.
 
-## Expectativas mínimas de testes
+### Expectativas mínimas de testes
 
 - Cada caso de uso deverá ter pelo menos 1 cenário de teste mapeado em formato BDD;
 - Todos os cenários de testes, exceto os marcados como exploratórios, deverão ter testes automatizados implementados.
 
-- TDD:
-    - Todo endpoint deverá ter pelo menos um teste unitário associado;
-    - Cobertura de 100% de testes unitários em código de alta criticidade;
-    - Cobertura de 90% de testes unitários em código de média criticidade;
-    - Cobertura de 50% de testes unitários em código de baixa criticidade.
+---
 
 ## Tecnologia
 
@@ -45,11 +47,21 @@ Este padrão se aplica a todos os serviços do projeto e é obrigatório para no
 
 - Consultar a pasta 'adr' para mais informações.
 
-### Limites explícitos de abstração
+### Codificação
 
-### Regras de naming (código, módulos, APIs)
+#### Limites explícitos de abstração
 
-### Padrões proibidos
+#### Regras de naming (código, módulos, APIs)
 
-### Restrições tecnológicas
+#### Padrões proibidos
 
+#### Restrições tecnológicas
+
+- Não utilizar frameworks, SDKs, bibliotecas, componentes ou serviços de terceiros que sejam pouco conhecidos no mercado, que não tenham sido suficientemente validados em uso profissional ou que não estejam sendo ativamente mantidos por uma base sólida de desenvolvedores ou empresas.
+
+### TDD
+
+- Todo endpoint deverá ter pelo menos um teste unitário associado;
+- Cobertura de 100% de testes unitários em código de alta criticidade;
+- Cobertura de 90% de testes unitários em código de média criticidade;
+- Cobertura de 50% de testes unitários em código de baixa criticidade.
