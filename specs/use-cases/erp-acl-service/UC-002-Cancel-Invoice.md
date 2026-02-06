@@ -1,34 +1,36 @@
 # UC-002 – Cancelar Fatura
+---
 
-## Contexto
-Faturas no sistema ERP legado podem precisar ser canceladas como ação corretiva.
+## História de Usuário
+**Como** agente do sistema  
+**preciso** cancelar uma nota fiscal existente no ERP  
+**para que** erros operacionais possam ser corrigidos de forma controlada.
 
-Este caso de uso garante que os cancelamentos sigam regras de negócio controladas.
+### Critérios de Aceite
+1. A nota fiscal deve existir;
+2. A nota fiscal não pode estar previamente cancelada;
+3. Um motivo de cancelamento deve ser informado;
+4. Após o cancelamento, a nota deve ser marcada como cancelada no ERP.
 
-## Ator Principal
-Serviço de Agente
+---
 
-## Objetivo
-Cancelar uma fatura existente no sistema ERP.
+## Cenários de Teste
 
-## Pré-condições
-- A fatura deve existir;
-- A fatura não deve ter sido cancelada anteriormente.
+### CT-001: Cancelar nota fiscal existente
+**Dado** que existe uma nota fiscal válida  
+**E** a nota fiscal não está cancelada  
+**E** foi informado um motivo de cancelamento  
+**Quando** o agente solicitar o cancelamento  
+**Então** a nota fiscal deve ser marcada como cancelada no ERP.
 
-## Fluxo Principal
-1. O cliente envia uma solicitação de cancelamento de fatura;
-2. O ACL verifica o status da fatura;
-3. O adaptador ERP é invocado para cancelar a fatura;
-4. Uma confirmação é retornada.
+### CT-002: Cancelar nota fiscal já cancelada
+**Dado** que a nota fiscal já está cancelada  
+**Quando** o agente solicitar o cancelamento  
+**Então** o sistema deve rejeitar a operação  
+**E** informar que a nota fiscal já foi cancelada.
 
-## Pós-condições
-- A fatura é marcada como cancelada no ERP.
-
-## Regras de Negócio
-- Faturas canceladas não podem ser canceladas novamente;
-- O motivo do cancelamento é obrigatório.
-
-## Fora do escopo
-- Estorno contábil;
-- Geração de nota de crédito.
-
+### CT-003: Cancelar nota fiscal sem motivo
+**Dado** que existe uma nota fiscal válida  
+**Quando** o agente solicitar o cancelamento sem informar o motivo  
+**Então** o sistema deve rejeitar a operação  
+**E** informar que o motivo de cancelamento é obrigatório.

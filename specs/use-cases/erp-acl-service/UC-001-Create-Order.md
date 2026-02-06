@@ -1,36 +1,29 @@
 # UC-001 – Criar Pedido
+---
 
-## Contexto
-O Serviço ACL do ERP expõe uma interface controlada para criar pedidos em um sistema ERP legado.
+## História de Usuário
+**Como** agente do sistema  
+**preciso** criar um pedido no ERP legado por meio do serviço de ACL  
+**para que** novas vendas possam ser registradas sem acessar diretamente o núcleo do ERP.
 
-Este caso de uso isola o núcleo do ERP de consumidores externos, como agentes de IA ou camadas de orquestração.
+### Critérios de Aceite
+1. O pedido deve conter um cliente válido;
+2. O valor total do pedido deve ser maior que zero;
+3. O sistema deve retornar o identificador do pedido criado.
 
-## Ator Principal
-Serviço de Agente (ou qualquer orquestrador upstream)
+---
 
-## Objetivo
-Criar um novo pedido de venda no sistema ERP por meio de um contrato estável e seguro.
+## Cenários de Teste
 
-## Pré-condições
-- Os dados do pedido devem ser validados antes de chegarem ao ERP;
-- O núcleo do ERP não é acessado diretamente.
+### CT-001: Criar pedido válido
+**Dado** que existe um cliente válido  
+**E** o valor total do pedido é maior que zero  
+**Quando** o agente solicitar a criação do pedido  
+**Então** o pedido deve ser criado no ERP  
+**E** um identificador de pedido deve ser retornado.
 
-## Fluxo Principal
-1. O cliente envia uma solicitação de criação de pedido;
-2. O ACL valida os campos obrigatórios;
-3. O pedido é mapeado para o formato específico do ERP;
-4. O adaptador do ERP é invocado;
-5. O identificador do pedido criado é retornado.
-
-## Pós-condições
-- Um pedido é criado no ERP (ou ERP simulado);
-- O núcleo do ERP permanece isolado.
-
-## Regras de Negócio
-- O total do pedido deve ser maior que zero;
-- É necessário pelo menos um item (simplificado no MVP).
-
-## Fora do escopo
-- Cálculo de preços;
-- Validação de estoque;
-- Processamento de pagamentos.
+### CT-002: Criar pedido com valor inválido
+**Dado** que o valor total do pedido é zero  
+**Quando** o agente solicitar a criação do pedido  
+**Então** o sistema deve rejeitar a operação  
+**E** informar que o valor do pedido é inválido.
