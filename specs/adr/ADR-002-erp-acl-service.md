@@ -38,6 +38,8 @@ Essa decisão foi tomada para garantir:
 - Comunicação interna de baixa latência;
 - Arquivos proto atuando como especificações executáveis dos contratos.
 
+---
+
 ## Endpoints Expostos
 
 - OrderService.CreateOrder
@@ -50,4 +52,41 @@ Essa decisão foi tomada para garantir:
 Os contratos gRPC são definidos na camada API do serviço ERP ACL e são
 considerados parte da interface interna pública do serviço para comunicação
 com outros microserviços da plataforma.
+
+---
+
+## Estratégia de Testes Unitários
+
+As regras de negócio expostas pelo ERP ACL Service são validadas por meio de testes unitários
+na camada de Aplicação.
+
+Os seguintes princípios se aplicam:
+
+- Os casos de uso são testados de forma isolada;
+- O acesso ao ERP é simulado (mockado) por meio das interfaces de gateway;
+- Adaptadores de infraestrutura são excluídos dos testes unitários;
+- Os testes são derivados diretamente das especificações dos casos de uso (Spec-Driven Development).
+
+Essa abordagem garante:
+
+- As regras de negócio permanecem estáveis independentemente da implementação do ERP;
+- Refatorações seguras dos adaptadores e camadas de integração;
+- Alinhamento claro entre especificações, código e validação automatizada.
+
+---
+
+## Testes de Contrato gRPC
+
+Os serviços que expõem interfaces gRPC devem possuir testes de contrato
+automatizados para garantir compatibilidade entre produtores e consumidores.
+
+No erp-acl-service, os contratos são validados através de testes gRPC que:
+
+- Inicializam o serviço em memória;
+- Utilizam o mesmo arquivo .proto da API;
+- Validam estrutura de request/response;
+- Garantem estabilidade do contrato público.
+
+Esses testes não validam regras de negócio, apenas o contrato técnico,
+sendo executados em pipelines de CI antes de deploy.
 
