@@ -19,10 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ErpAcl.Application\ErpAcl.Application.csproj" />
     <ProjectReference Include="..\ErpAcl.Infrastructure\ErpAcl.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Protobuf Include="Protos\erp_acl.proto" GrpcServices="Server" />
+    <ProjectReference Include="..\ErpAcl.Contracts\ErpAcl.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

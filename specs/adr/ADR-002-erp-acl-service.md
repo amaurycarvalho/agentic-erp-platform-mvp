@@ -40,6 +40,20 @@ Essa decisão foi tomada para garantir:
 
 ---
 
+## Contratos gRPC
+
+Os contratos gRPC do Erp ACL são centralizados no projeto ErpAcl.Contracts.
+
+Este projeto é:
+
+- Referenciado pelo ErpAcl.Api (provider)
+- Referenciado pelos testes ErpAcl.Contract.Tests (consumer)
+
+Testes de contrato validam exclusivamente a estrutura e estabilidade
+dos DTOs gRPC, sem dependência de infraestrutura ou execução do host.
+
+---
+
 ## Organização dos serviços gRPC no erp-acl-service
 
 O serviço ACL expõe múltiplos serviços gRPC, organizados por contexto:
@@ -83,17 +97,16 @@ Essa abordagem garante:
 - Refatorações seguras dos adaptadores e camadas de integração;
 - Alinhamento claro entre especificações, código e validação automatizada.
 
-### Testes de Contrato gRPC
+### Testes de Contrato (gRPC)
 
-Os serviços que expõem interfaces gRPC devem possuir testes de contrato
-automatizados para garantir compatibilidade entre produtores e consumidores.
+O projeto ErpAcl.Contract.Tests valida exclusivamente os contratos gRPC,
+sem inicializar o host da aplicação.
 
-No erp-acl-service, os contratos são validados através de testes gRPC que:
+Esses testes verificam:
 
-- Inicializam o serviço em memória;
-- Utilizam o mesmo arquivo .proto da API;
-- Validam estrutura de request/response;
-- Garantem estabilidade do contrato público.
+- Estrutura dos DTOs gerados a partir dos arquivos .proto;
+- Presença de campos obrigatórios;
+- Estabilidade do contrato para consumidores externos.
 
-Esses testes não validam regras de negócio, apenas o contrato técnico,
-sendo executados em pipelines de CI antes de deploy.
+Testes de contrato NÃO executam lógica de negócio nem infraestrutura.
+Testes de integração são tratados em projetos separados.

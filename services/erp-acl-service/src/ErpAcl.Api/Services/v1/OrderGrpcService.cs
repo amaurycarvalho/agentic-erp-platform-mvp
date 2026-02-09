@@ -1,11 +1,11 @@
-using ErpAcl.Api.Grpc;
 using ErpAcl.Application.UseCases;
 using ErpAcl.Domain.Models;
 using Grpc.Core;
+using ErpAcl.Contracts.V1;
 
-namespace ErpAcl.Api.Services;
+namespace ErpAcl.Api.Services.V1;
 
-public class OrderGrpcService(CreateOrderUseCase useCase) : OrderService.OrderServiceBase
+public class OrderGrpcV1Service(CreateOrderUseCase useCase) : OrderService.OrderServiceBase
 {
     private readonly CreateOrderUseCase _useCase = useCase;
 

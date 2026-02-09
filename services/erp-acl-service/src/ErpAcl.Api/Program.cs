@@ -1,4 +1,4 @@
-using ErpAcl.Api.Services;
+using ErpAcl.Api.Services.V1;
 using ErpAcl.Application.UseCases;
 using ErpAcl.Domain.Interfaces;
 using ErpAcl.Infrastructure.Adapters;
@@ -48,8 +48,8 @@ var app = builder.Build();
 // --------------------------------------------------
 // Pipeline
 // --------------------------------------------------
-app.MapGrpcService<OrderGrpcService>();
-app.MapGrpcService<InvoiceGrpcService>();
+app.MapGrpcService<OrderGrpcV1Service>();
+app.MapGrpcService<InvoiceGrpcV1Service>();
 
 app.MapHealthChecks("/health");
 

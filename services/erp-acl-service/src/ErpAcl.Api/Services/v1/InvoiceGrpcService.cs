@@ -1,10 +1,10 @@
-using ErpAcl.Api.Grpc;
 using ErpAcl.Application.UseCases;
 using Grpc.Core;
+using ErpAcl.Contracts.V1;
 
-namespace ErpAcl.Api.Services;
+namespace ErpAcl.Api.Services.V1;
 
-public class InvoiceGrpcService(CancelInvoiceUseCase useCase) : InvoiceService.InvoiceServiceBase
+public class InvoiceGrpcV1Service(CancelInvoiceUseCase useCase) : InvoiceService.InvoiceServiceBase
 {
     private readonly CancelInvoiceUseCase _useCase = useCase;
 
