@@ -6,14 +6,6 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --------------------------------------------------
-// gRPC configuration
-// --------------------------------------------------
-builder.Services.AddGrpc(options =>
-{
-    options.EnableDetailedErrors = true;
-});
-
 // Required for gRPC over HTTP/2
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -22,6 +14,15 @@ builder.WebHost.ConfigureKestrel(options =>
         listenOptions.Protocols = HttpProtocols.Http2;
     });
 });
+
+// --------------------------------------------------
+// gRPC configuration
+// --------------------------------------------------
+builder.Services.AddGrpc(options =>
+{
+    options.EnableDetailedErrors = true;
+});
+builder.Services.AddGrpcReflection();
 
 // --------------------------------------------------
 // Dependency Injection
@@ -50,6 +51,11 @@ var app = builder.Build();
 // --------------------------------------------------
 app.MapGrpcService<OrderGrpcV1Service>();
 app.MapGrpcService<InvoiceGrpcV1Service>();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapGrpcReflectionService();
+}
 
 app.MapHealthChecks("/health");
 
