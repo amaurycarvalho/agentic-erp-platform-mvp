@@ -1,7 +1,9 @@
 # ADR-002 – Decisões arquiteturais para o erp-acl-service
+
 ---
 
 ## Status
+
 Aceito
 
 ## Contexto
@@ -26,9 +28,7 @@ Adotar as seguintes abordagens arquiteturais para o serviço ACL do ERP:
 
 Os endpoints da camada ACL do ERP serão de consumo exclusivo do servidor MCP, exigindo máxima eficiencia e gestão minuciosa dos contratos envolvidos.
 
----
-
-## Comunicação entre Serviços
+#### Comunicação entre Serviços
 
 O serviço ERP ACL expõe seus casos de uso por meio de endpoints gRPC.
 Essa decisão foi tomada para garantir:
@@ -40,25 +40,35 @@ Essa decisão foi tomada para garantir:
 
 ---
 
-## Endpoints Expostos
+## Organização dos serviços gRPC no erp-acl-service
+
+O serviço ACL expõe múltiplos serviços gRPC, organizados por contexto:
+
+- OrderService: operações relacionadas a pedidos
+- InvoiceService: operações relacionadas a faturas
+
+Essa separação evita contratos inchados e mantém alinhamento com
+os bounded contexts do domínio.
+
+### Endpoints Expostos
 
 - OrderService.CreateOrder
-    - Cria um novo pedido no sistema ERP por meio da camada ACL;
-    - Mapeia diretamente o UC-001 (Create Order).
+  - Cria um novo pedido no sistema ERP por meio da camada ACL;
+  - Mapeia diretamente o UC-001 (Create Order).
 - InvoiceService.CancelInvoice
-    - Cancela uma fatura existente no sistema ERP;
-    - Mapeia diretamente o UC-002 (Cancel Invoice).
+  - Cancela uma fatura existente no sistema ERP;
+  - Mapeia diretamente o UC-002 (Cancel Invoice).
 
 Os contratos gRPC são definidos na camada API do serviço ERP ACL e são
-considerados parte da interface interna pública do serviço para comunicação
-com outros microserviços da plataforma.
+considerados parte da interface interna pública do serviço para comunicação com outros microserviços da plataforma.
 
 ---
 
-## Estratégia de Testes Unitários
+## Testes
 
-As regras de negócio expostas pelo ERP ACL Service são validadas por meio de testes unitários
-na camada de Aplicação.
+### Estratégia de Testes Unitários
+
+As regras de negócio expostas pelo ERP ACL Service são validadas por meio de testes unitários na camada de Aplicação.
 
 Os seguintes princípios se aplicam:
 
@@ -73,9 +83,7 @@ Essa abordagem garante:
 - Refatorações seguras dos adaptadores e camadas de integração;
 - Alinhamento claro entre especificações, código e validação automatizada.
 
----
-
-## Testes de Contrato gRPC
+### Testes de Contrato gRPC
 
 Os serviços que expõem interfaces gRPC devem possuir testes de contrato
 automatizados para garantir compatibilidade entre produtores e consumidores.
@@ -89,4 +97,3 @@ No erp-acl-service, os contratos são validados através de testes gRPC que:
 
 Esses testes não validam regras de negócio, apenas o contrato técnico,
 sendo executados em pipelines de CI antes de deploy.
-

@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C2621409
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErpAcl.Application.Tests", "tests\ErpAcl.Application.Tests\ErpAcl.Application.Tests.csproj", "{5A804AB7-0AAF-45BE-AED5-B0CE18403814}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErpAcl.ContractTests", "tests\ErpAcl.ContractTests\ErpAcl.ContractTests.csproj", "{2007C07E-8C60-4417-A1B1-82C4356B4992}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ErpAcl.Contract.Tests", "tests\ErpAcl.Contract.Tests\ErpAcl.Contract.Tests.csproj", "{2007C07E-8C60-4417-A1B1-82C4356B4992}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

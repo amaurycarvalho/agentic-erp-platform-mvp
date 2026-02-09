@@ -2,7 +2,8 @@ using ErpAcl.Application.UseCases;
 using ErpAcl.Domain.Interfaces;
 using ErpAcl.Domain.Models;
 using Moq;
-using Xunit;
+
+namespace ErpAcl.Application.Tests.CancelInvoice;
 
 public class CancelInvoiceUseCaseTests
 {
@@ -16,6 +17,7 @@ public class CancelInvoiceUseCaseTests
     }
 
     [Fact]
+    [Trait("Category", "Application")]
     public void Should_Cancel_Invoice_When_Valid()
     {
         var invoice = new Invoice
@@ -37,6 +39,7 @@ public class CancelInvoiceUseCaseTests
     }
 
     [Fact]
+    [Trait("Category", "Application")]
     public void Should_Throw_When_Invoice_Not_Found()
     {
         _invoiceGatewayMock
@@ -49,6 +52,7 @@ public class CancelInvoiceUseCaseTests
     }
 
     [Fact]
+    [Trait("Category", "Application")]
     public void Should_Throw_When_Invoice_Already_Cancelled()
     {
         var invoice = new Invoice
@@ -67,6 +71,7 @@ public class CancelInvoiceUseCaseTests
     }
 
     [Fact]
+    [Trait("Category", "Application")]
     public void Should_Throw_When_Reason_Is_Empty()
     {
         Assert.Throws<ArgumentException>(() =>

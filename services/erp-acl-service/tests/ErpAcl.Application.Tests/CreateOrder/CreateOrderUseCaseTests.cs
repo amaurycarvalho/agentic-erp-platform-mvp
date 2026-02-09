@@ -2,7 +2,8 @@ using ErpAcl.Application.UseCases;
 using ErpAcl.Domain.Interfaces;
 using ErpAcl.Domain.Models;
 using Moq;
-using Xunit;
+
+namespace ErpAcl.Application.Tests.CreateOrder;
 
 public class CreateOrderUseCaseTests
 {
@@ -16,6 +17,7 @@ public class CreateOrderUseCaseTests
     }
 
     [Fact]
+    [Trait("Category", "Application")]
     public void Should_Create_Order_When_Data_Is_Valid()
     {
         var order = new Order
@@ -36,6 +38,7 @@ public class CreateOrderUseCaseTests
     }
 
     [Fact]
+    [Trait("Category", "Application")]
     public void Should_Throw_Exception_When_Total_Is_Zero_Or_Less()
     {
         var order = new Order
