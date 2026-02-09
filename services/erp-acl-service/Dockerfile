@@ -5,6 +5,7 @@ COPY src/ErpAcl.Api/ErpAcl.Api.csproj src/ErpAcl.Api/
 COPY src/ErpAcl.Application/ErpAcl.Application.csproj src/ErpAcl.Application/
 COPY src/ErpAcl.Domain/ErpAcl.Domain.csproj src/ErpAcl.Domain/
 COPY src/ErpAcl.Infrastructure/ErpAcl.Infrastructure.csproj src/ErpAcl.Infrastructure/
+COPY src/ErpAcl.Contracts/ErpAcl.Contracts.csproj src/ErpAcl.Contracts/
 
 RUN dotnet restore src/ErpAcl.Api/ErpAcl.Api.csproj
 
