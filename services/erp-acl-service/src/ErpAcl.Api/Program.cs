@@ -13,6 +13,10 @@ builder.WebHost.ConfigureKestrel(options =>
     {
         listenOptions.Protocols = HttpProtocols.Http2;
     });
+    options.ListenAnyIP(8080, listenOptions =>
+    {
+        listenOptions.Protocols = HttpProtocols.Http1;
+    });
 });
 
 // --------------------------------------------------
@@ -57,11 +61,12 @@ if (app.Environment.IsDevelopment())
     app.MapGrpcReflectionService();
 }
 
-app.MapHealthChecks("/health");
+app.MapHealthChecks("/health")
+    .RequireHost("*:8080");
 
 app.MapGet("/", () =>
     "ERP ACL Service running with gRPC. Use a gRPC client to communicate."
-);
+).RequireHost("*:8080");
 
 // --------------------------------------------------
 // Run

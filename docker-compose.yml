@@ -1,16 +1,16 @@
 version: "3.9"
 
 services:
-
   agent-service:
     build:
       context: ./services/agent-service
       dockerfile: Dockerfile
     container_name: agent-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
     ports:
       - "8080:8080"
     depends_on:
-      - erp-acl-service
       - mcp-service
       - rag-service
     networks:
@@ -21,18 +21,47 @@ services:
       context: ./services/erp-acl-service
       dockerfile: Dockerfile
     container_name: erp-acl-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
     ports:
+      - "8080:8080"
       - "8081:8081"
     networks:
       - agentic-network
+
+  erp-acl-service-check:
+    image: alpine/curl:latest
+    container_name: erp-acl-service-check
+    networks:
+      - agentic-network
+    depends_on:
+      erp-acl-service:
+        condition: service_started
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "
+      sleep 30 && 
+      exit 0
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://erp-acl-service:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: "no"
 
   mcp-service:
     build:
       context: ./services/mcp-service
       dockerfile: Dockerfile
     container_name: mcp-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
     ports:
       - "8082:8082"
+    depends_on:
+      erp-acl-service-check:
+        condition: service_healthy
     networks:
       - agentic-network
 
@@ -41,6 +70,8 @@ services:
       context: ./services/rag-service
       dockerfile: Dockerfile
     container_name: rag-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
     ports:
       - "8083:8083"
     networks:
@@ -49,4 +80,3 @@ services:
 networks:
   agentic-network:
     driver: bridge
-
