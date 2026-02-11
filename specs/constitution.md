@@ -6,76 +6,52 @@ Este documento define os princípios imutáveis do sistema.
 
 ## Princípios gerais
 
-1. O ERP legado é um sistema estável e intocável;
-2. Nenhuma IA acessa diretamente o ERP;
-3. Toda automação deve ser reversível e auditável;
-4. Decisão é separada de execução;
-5. Conhecimento (RAG) não executa ações;
-6. Capacidades expostas à IA devem ser explícitas (MCP);
+1. O ERP legado é um sistema estável e intocável.
+2. Nenhuma IA acessa diretamente o ERP.
+3. Toda automação deve ser reversível e auditável.
+4. Decisão é separada de execução.
+5. Conhecimento (RAG) não executa ações.
+6. Capacidades expostas à IA devem ser explícitas (MCP).
 7. Especificações precedem código.
 
 Estes princípios não são opcionais.
 
 ---
 
-## Backlog
+## Padrão obrigatório de use case
 
-### Padrão de Especificação de Casos de Uso
+Todos os casos de uso devem conter:
 
-Todos os casos de uso deste projeto devem ser escritos seguindo uma abordagem em camadas:
-
-1. Uma História de Usuário em alto nível, no formato:
-   "Como [ator], preciso [funcionalidade] para que [benefício/valor]"
-
-2. Critérios de Aceite explícitos, descrevendo as regras de negócio e restrições envolvidas.
-
-3. Cenários comportamentais escritos no formato BDD (Dado / Quando / Então),
-   garantindo que as especificações possam ser validadas e automatizadas.
-
-Este padrão se aplica a todos os serviços do projeto e é obrigatório para novas funcionalidades.
-
-### Expectativas mínimas de testes
-
-- Cada caso de uso deverá ter pelo menos 1 cenário de teste mapeado em formato BDD;
-- Todos os cenários de testes, exceto os marcados como exploratórios, deverão ter testes automatizados implementados.
+1. História de Usuário no formato: "Como [ator], preciso [funcionalidade] para que [benefício/valor]".
+2. Critérios de Aceite explícitos.
+3. Cenários comportamentais em BDD (`Dado / Quando / Então`).
 
 ---
 
-## Tecnologia
+## Diretrizes técnicas obrigatórias
 
-### Princípios arquiteturais obrigatórios
+- Consultar a pasta `specs/adr` para decisões arquiteturais vigentes.
 
-- Consultar a pasta 'adr' para mais informações.
+### Convenções gRPC em C#
 
-### Codificação
+- Todo contrato gRPC deve usar `option csharp_namespace`.
+- Clients devem ser instanciados a partir das classes geradas pelo `.proto`.
+- Testes de contrato validam apenas campos definidos no `.proto`.
 
-#### Limites explícitos de abstração
+### Restrições tecnológicas
 
-#### Regras de naming (código, módulos, APIs)
+- Não utilizar frameworks, SDKs, bibliotecas, componentes ou serviços de terceiros pouco conhecidos, não validados profissionalmente ou sem manutenção ativa.
 
-##### Convenções gRPC em C#
+### Segurança e qualidade
 
-- Todos os serviços gRPC utilizam `option csharp_namespace`;
-- Os clients devem ser instanciados diretamente a partir da classe do serviço gerada;
-- Testes de contrato devem validar apenas campos definidos no .proto
+- Alertar se houver vulnerabilidades conhecidas (OWASP, CISA) e propor mitigação.
+- Propor remoção de pacotes não utilizados.
 
-#### Padrões proibidos
+---
 
-#### Restrições tecnológicas
+## Estratégia de testes
 
-- Não utilizar frameworks, SDKs, bibliotecas, componentes ou serviços de terceiros que sejam pouco conhecidos no mercado, que não tenham sido suficientemente validados em uso profissional ou que não estejam sendo ativamente mantidos por uma base sólida de desenvolvedores ou empresas;
-- Alertar se qualquer dessas restrições forem encontradas no código.
-
-#### Segurança
-
-- Alertar se qualquer parte do código conter vulnerabilidades já conhecidas (OWASP, CISA) e propor a solução;
-- Propor a remoção de pacotes que não estiverem sendo ativamente usados no projeto.
-
-### Testes
-
-#### Estratégia de teste
-
-- Uso de TDD;
-- Todo endpoint deverá ter pelo menos um teste unitário associado;
-- Cobertura de 100% de testes unitários em código de média e alta criticidade;
-- Cobertura de 90% de testes unitários em código de baixa criticidade.
+- Uso de TDD.
+- Todo endpoint deve ter pelo menos um teste unitário associado.
+- Cobertura mínima de 100% para código de média/alta criticidade.
+- Cobertura mínima de 90% para código de baixa criticidade.

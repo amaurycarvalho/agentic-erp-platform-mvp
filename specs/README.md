@@ -1,25 +1,43 @@
 # Specs – agentic-erp-platform-mvp
 
-Este diretório contém as **especificações formais (SDD – Spec Driven Development)** do projeto.
+Este diretório contém as especificações formais do projeto (SDD).
 
-As specs são a **fonte primária de verdade**: código, prompts, contratos MCP e integrações devem existir apenas para implementar o que está definido aqui.
+Se não está especificado aqui, não faz parte do sistema.
 
-Se não está especificado aqui, **não faz parte do sistema**.
+## Estrutura
 
-## Estrutura SDD:
+- `constitution.md`: princípios e regras mandatórias;
+- `glossary.md`: linguagem comum de domínio;
+- `requirements.md` e `non-functional-requirements.md`: requisitos do sistema;
+- `use-cases/`: comportamento esperado por serviço;
+- `adr/`: decisões arquiteturais;
+- `edge-cases.md`: exceções importantes;
+- `plan.md` e `tasks.md`: evolução e execução.
 
-- Princípios e limites do sistema (constitution);
-- Linguagem comum de negócio (glossary);
-- Requisitos funcionais e não funcionais (requirements e non-functional-requirements);
-- Casos de uso orientados a valor organizados por serviço (use-cases/);
-- Decisões arquiteturais (adr/)
-- Exceções importantes (edge-cases);
-- Plano evolutivo e backlog inicial (plan e tasks).
+## Fonte de verdade por tipo
 
-## Estrutura do projeto
+- Regras globais e transversais: `requirements.md`, `non-functional-requirements.md`, `constitution.md`.
+- Comportamento de negócio por fluxo: `use-cases/`.
+- Contratos de payload/erro de ferramentas MCP: `specs/use-cases/mcp-service/CONTRACT-tools.md`.
+- Decisões estruturais de arquitetura: `adr/`.
 
-- /specs: Referencia para comportamento, decisões e planejamento;
-- /services: Implementações dos serviços descritos nas specs;
-- /services/<serviço>/src: Código fonte do serviço;
-- /services/<serviço>/tests: Testes unitários do serviço;
-- /shared: Código compartilhado entre serviços.
+## Matriz de rastreabilidade (MVP atual)
+
+| Requisito | UC ID | Use Case | Contrato | Testes esperados |
+|---|---|---|---|---|
+| `REQ-FUNC-003`, `REQ-FUNC-004`, `REQ-FUNC-005` | `UC-MCP-001` | `specs/use-cases/mcp-service/UC-001-Create-Order.md` | `MCP-TOOL-001` | Unitários MCP + Contract ACL + Integração MCP->ACL |
+| `REQ-FUNC-003`, `REQ-FUNC-004`, `REQ-FUNC-005` | `UC-MCP-002` | `specs/use-cases/mcp-service/UC-002-Cancel-Invoice.md` | `MCP-TOOL-002` | Unitários MCP + Contract ACL + Integração MCP->ACL |
+| `REQ-FUNC-004` | `UC-ACL-001` | `specs/use-cases/erp-acl-service/UC-001-Create-Order.md` | `erp_acl.proto` (`OrderService.CreateOrder`) | Unitários aplicação ACL + contrato gRPC |
+| `REQ-FUNC-004` | `UC-ACL-002` | `specs/use-cases/erp-acl-service/UC-002-Cancel-Invoice.md` | `erp_acl.proto` (`InvoiceService.CancelInvoice`) | Unitários aplicação ACL + contrato gRPC |
+| `REQ-FUNC-001`, `REQ-FUNC-002`, `REQ-FUNC-003` | `UC-AGENT-001` | `specs/use-cases/agent-service/UC-001-Create-Order.md` | `MCP-TOOL-001` | Testes de orquestração do agent-service |
+| `REQ-FUNC-001`, `REQ-FUNC-002`, `REQ-FUNC-003` | `UC-AGENT-002` | `specs/use-cases/agent-service/UC-002-Cancel-Invoice.md` | `MCP-TOOL-002` | Testes de orquestração do agent-service |
+
+## Matriz Edge Cases (MVP atual)
+
+| Edge Case | UC IDs prioritários |
+|---|---|
+| `EC-001` Solicitação ambígua/incompleta | `UC-AGENT-001`, `UC-AGENT-002` |
+| `EC-002` Ação não exposta no MCP | `UC-MCP-001`, `UC-MCP-002` |
+| `EC-003` Divergência RAG x ERP | `UC-AGENT-001`, `UC-AGENT-002`, `UC-MCP-001`, `UC-MCP-002` |
+| `EC-004` Falha parcial de plano | `UC-AGENT-001`, `UC-AGENT-002` |
+| `EC-005` Reexecução idempotente | `UC-MCP-001`, `UC-MCP-002`, `UC-ACL-001`, `UC-ACL-002` |

@@ -1,6 +1,9 @@
 # UC-002 – Cancelar Fatura
 ---
 
+## ID
+`UC-ACL-002`
+
 ## História de Usuário
 **Como** agente do sistema  
 **preciso** cancelar uma nota fiscal existente no ERP  

@@ -10,9 +10,17 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
     depends_on:
-      - mcp-service
-      - rag-service
+      mcp-service:
+        condition: service_healthy
+      rag-service:
+        condition: service_healthy
     networks:
       - agentic-network
 
@@ -24,43 +32,34 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
     ports:
-      - "8080:8080"
+      - "8084:8080"
       - "8081:8081"
-    networks:
-      - agentic-network
-
-  erp-acl-service-check:
-    image: alpine/curl:latest
-    container_name: erp-acl-service-check
-    networks:
-      - agentic-network
-    depends_on:
-      erp-acl-service:
-        condition: service_started
-    entrypoint: ["/bin/sh", "-c"]
-    command: >
-      "
-      sleep 30 && 
-      exit 0
-      "
     healthcheck:
-      test: ["CMD", "curl", "-fs", "http://erp-acl-service:8080/health"]
-      interval: 5s
+      test: ["CMD", "curl", "-fs", "http://localhost:8080/health"]
+      interval: 10s
       timeout: 3s
       retries: 10
-    restart: "no"
+      start_period: 10s
+    networks:
+      - agentic-network
 
   mcp-service:
     build:
-      context: ./services/mcp-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/mcp-service/Dockerfile
     container_name: mcp-service
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
     ports:
       - "8082:8082"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8082/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
     depends_on:
-      erp-acl-service-check:
+      erp-acl-service:
         condition: service_healthy
     networks:
       - agentic-network
@@ -74,6 +73,12 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
     ports:
       - "8083:8083"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8083/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
     networks:
       - agentic-network
 
