@@ -8,10 +8,11 @@
 - [x] Estruturar compose com health checks por serviço.
 - [x] Automatizar testes com rastreabilidade explícita a partir das specs.
 - [x] Implementar testes de integração `mcp-service` -> `erp-acl-service`.
+- [x] Expandir cobertura de integração para cenários de resiliência (timeout/retry).
 
 ## Em andamento
 
-- [ ] Expandir cobertura de integração para cenários de resiliência (timeout/retry).
+- [ ] Consolidar estratégia de retry com telemetria por tentativa (logs e métricas).
 
 ## Próximos passos
 

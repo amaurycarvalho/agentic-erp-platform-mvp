@@ -14,7 +14,7 @@ Testes de integração da cadeia `mcp-service` -> `erp-acl-service`.
    - Se MCP estiver em Docker, usar `http://erp-acl-service:8081`.
    - Se MCP estiver local, usar `http://localhost:8081`.
 
-## Modo recomendado (Docker Compose)
+## Modo recomendado (Docker Compose) - suíte completa
 
 ```bash
 docker-compose up -d erp-acl-service mcp-service
@@ -64,6 +64,19 @@ Se o teste retornar `503` com `acl_unavailable`:
 1. O MCP está ativo, mas não consegue conectar ao ACL gRPC;
 2. Verifique se o ACL está ouvindo em `8081` (gRPC);
 3. Verifique se o MCP está com `ErpAcl__GrpcAddress` correto para o modo de execução.
+
+## Cenários de resiliência (timeout/retry) via Docker Compose
+
+Para validar retry/timeout com ACL indisponível, mantenha apenas o MCP ativo:
+
+```bash
+docker-compose up -d --build erp-acl-service mcp-service
+docker-compose stop erp-acl-service
+MCP_UNAVAILABLE_BASE_URL=http://localhost:8082 dotnet test services/mcp-service/tests/Mcp.Integration.Tests/Mcp.Integration.Tests.csproj --filter "Category=Mcp.Integration.Resilience"
+docker-compose start erp-acl-service
+```
+
+Observação: o endpoint apontado por `MCP_UNAVAILABLE_BASE_URL` deve ser um MCP ativo; o indisponível no cenário é o ERP ACL.
 
 ## Rastreabilidade
 

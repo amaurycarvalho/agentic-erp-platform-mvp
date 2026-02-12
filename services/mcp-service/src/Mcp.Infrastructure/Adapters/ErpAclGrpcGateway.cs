@@ -19,16 +19,18 @@ public sealed class ErpAclGrpcGateway(IOptions<ErpAclOptions> options) : IErpAcl
     {
         try
         {
-            using var channel = GrpcChannel.ForAddress(_options.GrpcAddress);
-            var client = new OrderService.OrderServiceClient(channel);
-
-            var response = await client.CreateOrderAsync(
-                new CreateOrderRequest
-                {
-                    CustomerId = customerId,
-                    TotalAmount = (double)totalAmount
-                },
-                cancellationToken: cancellationToken);
+            var response = await ExecuteWithResilienceAsync(async (channel, ct) =>
+            {
+                var client = new OrderService.OrderServiceClient(channel);
+                return await client.CreateOrderAsync(
+                    new CreateOrderRequest
+                    {
+                        CustomerId = customerId,
+                        TotalAmount = (double)totalAmount
+                    },
+                    deadline: DateTime.UtcNow.AddMilliseconds(_options.CallTimeoutMs),
+                    cancellationToken: ct);
+            }, cancellationToken);
 
             if (string.IsNullOrWhiteSpace(response.OrderId))
             {
@@ -58,16 +60,18 @@ public sealed class ErpAclGrpcGateway(IOptions<ErpAclOptions> options) : IErpAcl
     {
         try
         {
-            using var channel = GrpcChannel.ForAddress(_options.GrpcAddress);
-            var client = new InvoiceService.InvoiceServiceClient(channel);
-
-            var response = await client.CancelInvoiceAsync(
-                new CancelInvoiceRequest
-                {
-                    InvoiceId = invoiceId,
-                    Reason = reason
-                },
-                cancellationToken: cancellationToken);
+            var response = await ExecuteWithResilienceAsync(async (channel, ct) =>
+            {
+                var client = new InvoiceService.InvoiceServiceClient(channel);
+                return await client.CancelInvoiceAsync(
+                    new CancelInvoiceRequest
+                    {
+                        InvoiceId = invoiceId,
+                        Reason = reason
+                    },
+                    deadline: DateTime.UtcNow.AddMilliseconds(_options.CallTimeoutMs),
+                    cancellationToken: ct);
+            }, cancellationToken);
 
             return response.Success;
         }
@@ -100,4 +104,47 @@ public sealed class ErpAclGrpcGateway(IOptions<ErpAclOptions> options) : IErpAcl
                 rpcException)
         };
     }
+
+    private async Task<TResponse> ExecuteWithResilienceAsync<TResponse>(
+        Func<GrpcChannel, CancellationToken, Task<TResponse>> call,
+        CancellationToken cancellationToken)
+    {
+        var maxAttempts = Math.Max(1, _options.MaxRetries + 1);
+        RpcException? lastTransientException = null;
+
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            try
+            {
+                using var channel = GrpcChannel.ForAddress(_options.GrpcAddress);
+                return await call(channel, cancellationToken);
+            }
+            catch (RpcException rpcException) when (IsTransient(rpcException))
+            {
+                lastTransientException = rpcException;
+
+                if (attempt >= maxAttempts || cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                var delay = TimeSpan.FromMilliseconds(Math.Max(0, _options.RetryDelayMs) * attempt);
+                await Task.Delay(delay, cancellationToken);
+            }
+        }
+
+        if (lastTransientException is not null)
+        {
+            throw new RpcException(
+                new Status(
+                    lastTransientException.StatusCode,
+                    $"Transient failure after {maxAttempts} attempts. {lastTransientException.Status.Detail}"),
+                lastTransientException.Trailers);
+        }
+
+        throw new RpcException(new Status(StatusCode.Unavailable, "Unknown transient failure."));
+    }
+
+    private static bool IsTransient(RpcException rpcException) =>
+        rpcException.StatusCode is StatusCode.Unavailable or StatusCode.DeadlineExceeded;
 }
