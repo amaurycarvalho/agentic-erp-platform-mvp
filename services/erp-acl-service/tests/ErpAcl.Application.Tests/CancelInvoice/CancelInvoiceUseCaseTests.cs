@@ -5,6 +5,7 @@ using Moq;
 
 namespace ErpAcl.Application.Tests.CancelInvoice;
 
+[Trait("Category", "ErpAcl.Application")]
 public class CancelInvoiceUseCaseTests
 {
     private readonly Mock<IInvoiceGateway> _invoiceGatewayMock;
@@ -17,7 +18,6 @@ public class CancelInvoiceUseCaseTests
     }
 
     [Fact]
-    [Trait("Category", "Application")]
     public void Should_Cancel_Invoice_When_Valid()
     {
         var invoice = new Invoice
@@ -39,7 +39,6 @@ public class CancelInvoiceUseCaseTests
     }
 
     [Fact]
-    [Trait("Category", "Application")]
     public void Should_Throw_When_Invoice_Not_Found()
     {
         _invoiceGatewayMock
@@ -52,7 +51,6 @@ public class CancelInvoiceUseCaseTests
     }
 
     [Fact]
-    [Trait("Category", "Application")]
     public void Should_Throw_When_Invoice_Already_Cancelled()
     {
         var invoice = new Invoice
@@ -71,7 +69,6 @@ public class CancelInvoiceUseCaseTests
     }
 
     [Fact]
-    [Trait("Category", "Application")]
     public void Should_Throw_When_Reason_Is_Empty()
     {
         Assert.Throws<ArgumentException>(() =>

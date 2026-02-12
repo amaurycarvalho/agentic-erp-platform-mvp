@@ -61,8 +61,7 @@ if (app.Environment.IsDevelopment())
     app.MapGrpcReflectionService();
 }
 
-app.MapHealthChecks("/health")
-    .RequireHost("*:8080");
+app.MapHealthChecks("/health");
 
 app.MapGet("/", () =>
     "ERP ACL Service running with gRPC. Use a gRPC client to communicate."

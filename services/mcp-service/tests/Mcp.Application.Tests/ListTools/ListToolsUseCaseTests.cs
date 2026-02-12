@@ -3,6 +3,10 @@ using Mcp.Application.UseCases.ListTools;
 
 namespace Mcp.Application.Tests.ListTools;
 
+[Trait("Category", "Mcp.Application")]
+[Trait("REQ", "REQ-FUNC-003")]
+[Trait("UC", "UC-MCP-001")]
+[Trait("UC", "UC-MCP-002")]
 public class ListToolsUseCaseTests
 {
     [Fact]

@@ -9,6 +9,12 @@ using Moq;
 
 namespace Mcp.Application.Tests.ExecuteTool;
 
+[Trait("Category", "Mcp.Application")]
+[Trait("REQ", "REQ-FUNC-003")]
+[Trait("REQ", "REQ-FUNC-004")]
+[Trait("REQ", "REQ-FUNC-005")]
+[Trait("UC", "UC-MCP-001")]
+[Trait("UC", "UC-MCP-002")]
 public class ExecuteMcpToolUseCaseTests
 {
     [Fact]

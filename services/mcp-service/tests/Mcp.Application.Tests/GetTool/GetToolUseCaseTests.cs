@@ -6,6 +6,10 @@ using Moq;
 
 namespace Mcp.Application.Tests.GetTool;
 
+[Trait("Category", "Mcp.Application")]
+[Trait("REQ", "REQ-FUNC-003")]
+[Trait("UC", "UC-MCP-001")]
+[Trait("UC", "UC-MCP-002")]
 public class GetToolUseCaseTests
 {
     [Fact]

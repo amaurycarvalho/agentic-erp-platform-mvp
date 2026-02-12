@@ -5,6 +5,10 @@ using Mcp.Application.UseCases.ValidatePayload;
 
 namespace Mcp.Application.Tests.ValidatePayload;
 
+[Trait("Category", "Mcp.Application")]
+[Trait("REQ", "REQ-FUNC-003")]
+[Trait("UC", "UC-MCP-001")]
+[Trait("UC", "UC-MCP-002")]
 public class ValidatePayloadUseCaseTests
 {
     private readonly ValidatePayloadUseCase _useCase = new();

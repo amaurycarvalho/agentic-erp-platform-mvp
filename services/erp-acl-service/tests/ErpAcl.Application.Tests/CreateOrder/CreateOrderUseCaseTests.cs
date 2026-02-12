@@ -5,6 +5,7 @@ using Moq;
 
 namespace ErpAcl.Application.Tests.CreateOrder;
 
+[Trait("Category", "ErpAcl.Application")]
 public class CreateOrderUseCaseTests
 {
     private readonly Mock<IOrderGateway> _orderGatewayMock;
@@ -17,7 +18,6 @@ public class CreateOrderUseCaseTests
     }
 
     [Fact]
-    [Trait("Category", "Application")]
     public void Should_Create_Order_When_Data_Is_Valid()
     {
         var order = new Order
@@ -38,7 +38,6 @@ public class CreateOrderUseCaseTests
     }
 
     [Fact]
-    [Trait("Category", "Application")]
     public void Should_Throw_Exception_When_Total_Is_Zero_Or_Less()
     {
         var order = new Order

@@ -50,6 +50,7 @@ services:
     container_name: mcp-service
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ErpAcl__GrpcAddress: http://erp-acl-service:8081
     ports:
       - "8082:8082"
     healthcheck:

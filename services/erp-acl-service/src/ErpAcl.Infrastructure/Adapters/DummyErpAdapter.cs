@@ -10,6 +10,11 @@ public class DummyErpAdapter : IOrderGateway, IInvoiceGateway
     public Order Create(Order order)
     {
         // Simulates ERP order creation
+        if (string.IsNullOrWhiteSpace(order.Id))
+        {
+            order.Id = $"ORD-{Guid.NewGuid():N}".ToUpperInvariant();
+        }
+
         return order;
     }
 
@@ -25,4 +30,3 @@ public class DummyErpAdapter : IOrderGateway, IInvoiceGateway
         return invoice;
     }
 }
-

@@ -13,18 +13,24 @@ public class OrderGrpcV1Service(CreateOrderUseCase useCase) : OrderService.Order
         CreateOrderRequest request,
         ServerCallContext context)
     {
-        var order = new Order
+        try
         {
-            CustomerId = request.CustomerId,
-            TotalAmount = (decimal)request.TotalAmount
-        };
+            var order = new Order
+            {
+                CustomerId = request.CustomerId,
+                TotalAmount = (decimal)request.TotalAmount
+            };
 
-        var created = _useCase.Execute(order);
+            var created = _useCase.Execute(order);
 
-        return Task.FromResult(new CreateOrderResponse
+            return Task.FromResult(new CreateOrderResponse
+            {
+                OrderId = created.Id
+            });
+        }
+        catch (ArgumentException exception)
         {
-            OrderId = created.Id
-        });
+            throw new RpcException(new Status(StatusCode.InvalidArgument, exception.Message));
+        }
     }
 }
-

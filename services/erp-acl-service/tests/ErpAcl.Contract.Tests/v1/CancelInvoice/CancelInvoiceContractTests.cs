@@ -2,10 +2,10 @@ using ErpAcl.Contracts.V1;
 
 namespace ErpAcl.Contract.Tests.V1.CancelInvoice;
 
+[Trait("Category", "ErpAcl.Contracts")]
 public class CancelInvoiceContractTests
 {
     [Fact]
-    [Trait("Category", "Contract")]
     public void CancelInvoiceRequest_Should_Require_InvoiceId()
     {
         var request = new CancelInvoiceRequest
@@ -17,7 +17,6 @@ public class CancelInvoiceContractTests
     }
 
     [Fact]
-    [Trait("Category", "Contract")]
     public void CancelInvoiceResponse_Should_Expose_Success_Flag()
     {
         var response = new CancelInvoiceResponse
@@ -30,7 +29,6 @@ public class CancelInvoiceContractTests
 
     /*
     [Fact]
-    [Trait("Category", "Contract")]
     public void CancelInvoiceResponse_Should_Not_Remove_InvoiceId_Field()
     {
         var properties = typeof(CancelInvoiceResponse).GetProperties();
