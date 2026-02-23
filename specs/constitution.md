@@ -44,6 +44,7 @@ Todos os casos de uso devem conter:
 
 ### Segurança e qualidade
 
+- Security by design.
 - Alertar se houver vulnerabilidades conhecidas (OWASP, CISA) e propor mitigação.
 - Propor remoção de pacotes não utilizados.
 
