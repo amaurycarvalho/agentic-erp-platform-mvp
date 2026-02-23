@@ -1,8 +1,8 @@
-# UC-001 – Solicitar Criação de Pedido via MCP
+# US-001 – Solicitar Criação de Pedido via MCP
 ---
 
 ## ID
-`UC-AGENT-001`
+`US-AGENT-001`
 
 ## História de Usuário
 **Como** agente do sistema  

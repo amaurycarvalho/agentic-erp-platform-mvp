@@ -1,8 +1,8 @@
-# UC-001 – Criar Pedido via MCP
+# US-001 – Criar Pedido via MCP
 ---
 
 ## ID
-`UC-MCP-001`
+`US-MCP-001`
 
 ## História de Usuário
 **Como** agent-service consumidor do servidor MCP  

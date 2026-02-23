@@ -1,8 +1,8 @@
-# UC-002 – Solicitar Cancelamento de Fatura via MCP
+# US-002 – Solicitar Cancelamento de Fatura via MCP
 ---
 
 ## ID
-`UC-AGENT-002`
+`US-AGENT-002`
 
 ## História de Usuário
 **Como** agente do sistema  

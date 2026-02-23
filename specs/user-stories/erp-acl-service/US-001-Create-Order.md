@@ -1,8 +1,8 @@
-# UC-001 – Criar Pedido
+# US-001 – Criar Pedido
 ---
 
 ## ID
-`UC-ACL-001`
+`US-ACL-001`
 
 ## História de Usuário
 **Como** agente do sistema  

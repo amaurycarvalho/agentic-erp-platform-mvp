@@ -1,8 +1,8 @@
-# UC-002 – Cancelar Fatura via MCP
+# US-002 – Cancelar Fatura via MCP
 ---
 
 ## ID
-`UC-MCP-002`
+`US-MCP-002`
 
 ## História de Usuário
 **Como** agent-service consumidor do servidor MCP  

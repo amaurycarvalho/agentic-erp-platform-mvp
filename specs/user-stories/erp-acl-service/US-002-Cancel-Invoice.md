@@ -1,8 +1,8 @@
-# UC-002 – Cancelar Fatura
+# US-002 – Cancelar Fatura
 ---
 
 ## ID
-`UC-ACL-002`
+`US-ACL-002`
 
 ## História de Usuário
 **Como** agente do sistema  
