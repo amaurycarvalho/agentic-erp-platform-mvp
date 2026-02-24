@@ -13,7 +13,7 @@
 ## Próximos passos
 
 - [x] Implementar casos de uso faltantes no `agent-service`;
-- [ ] Implementar backlog inicial do `rag-service`;
+- [x] Implementar backlog inicial do `rag-service`;
 - [ ] Implementar observabilidade (correlation id, métricas e tracing);
 - [ ] Observabilidade `mcp-service`: consolidar estratégia de retry com telemetria por tentativa (logs e métricas);
 - [ ] Observabilidade `erp-acl-service`: padronizar logs estruturados, métricas de health e tracing de chamadas gRPC;

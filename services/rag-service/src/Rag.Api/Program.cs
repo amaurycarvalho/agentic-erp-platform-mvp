@@ -1,14 +1,22 @@
-var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://0.0.0.0:8083");
+using Rag.Application.UseCases.ResolveVersionedSources;
+using Rag.Application.UseCases.SearchPoliciesByContext;
+using Rag.Application.UseCases.ValidateConsistencyAgainstErpState;
+using Rag.Domain.Interfaces;
+using Rag.Infrastructure.Repositories;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseUrls("http://0.0.0.0:8083");
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<IPolicyDocumentRepository, InMemoryPolicyDocumentRepository>();
+builder.Services.AddScoped<ResolveVersionedSourcesUseCase>();
+builder.Services.AddScoped<ValidateConsistencyAgainstErpStateUseCase>();
+builder.Services.AddScoped<BuildTraceableResponseUseCase>();
+builder.Services.AddScoped<SearchPoliciesByContextUseCase>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -17,35 +25,34 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
-var summaries = new[]
+app.MapPost("/rag/search", async (
+    RagSearchRequest request,
+    SearchPoliciesByContextUseCase useCase,
+    HttpContext httpContext,
+    CancellationToken cancellationToken) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    try
+    {
+        var requestId = string.IsNullOrWhiteSpace(httpContext.TraceIdentifier)
+            ? Guid.NewGuid().ToString("N")
+            : httpContext.TraceIdentifier;
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+        var response = await useCase.ExecuteAsync(request, requestId, cancellationToken);
+        return Results.Ok(response);
+    }
+    catch (RagValidationException exception)
+    {
+        return Results.BadRequest(new { error = "validation_error", detail = exception.Message });
+    }
+});
 
 app.MapGet("/", () => Results.Ok(new
 {
     service = "rag-service",
-    status = "running"
+    status = "running",
+    search = "/rag/search"
 }));
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+public partial class Program;
