@@ -1,0 +1,229 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "clean all",
+      "dependsOn": [
+        "agent-service: clean",
+        "erp-acl-service: clean",
+        "mcp-service: clean",
+        "rag-service: clean"
+      ],
+      "dependsOrder": "sequence",
+      "group": {
+        "kind": "none"
+      }
+    },
+    {
+      "label": "build all",
+      "dependsOn": [
+        "agent-service: build",
+        "erp-acl-service: build",
+        "mcp-service: build",
+        "rag-service: build"
+      ],
+      "dependsOrder": "sequence",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "test all",
+      "dependsOn": [
+        "agent-service: test",
+        "erp-acl-service: test",
+        "mcp-service: test",
+        "rag-service: test"
+      ],
+      "dependsOrder": "sequence",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "run container",
+      "type": "shell",
+      "command": "docker-compose up --build",
+      "windows": {
+        "command": "docker-compose up --build"
+      },
+      "group": {
+        "kind": "none"
+      }
+    },
+    {
+      "label": "agent-service: clean",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "clean",
+        "${workspaceFolder}/services/agent-service",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "none"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "agent-service: build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/services/agent-service",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "build"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "agent-service: test",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "test",
+        "${workspaceFolder}/services/agent-service",
+        "--verbosity:quiet"
+      ],
+      "group": {
+        "kind": "test"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "erp-acl-service: clean",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "clean",
+        "${workspaceFolder}/services/erp-acl-service",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "none"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "erp-acl-service: build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/services/erp-acl-service",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "build"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "erp-acl-service: test",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "test",
+        "${workspaceFolder}/services/erp-acl-service",
+        "--verbosity:quiet"
+      ],
+      "group": {
+        "kind": "test"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "mcp-service: clean",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "clean",
+        "${workspaceFolder}/services/mcp-service",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "none"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "mcp-service: build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/services/mcp-service",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "build"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "mcp-service: test",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "test",
+        "${workspaceFolder}/services/mcp-service",
+        "--verbosity:quiet"
+      ],
+      "group": {
+        "kind": "test"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "rag-service: clean",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "clean",
+        "${workspaceFolder}/services/rag-service",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "none"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "rag-service: build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/services/rag-service",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": {
+        "kind": "build"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "rag-service: test",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "test",
+        "${workspaceFolder}/services/rag-service",
+        "--verbosity:quiet"
+      ],
+      "group": {
+        "kind": "test"
+      },
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}
