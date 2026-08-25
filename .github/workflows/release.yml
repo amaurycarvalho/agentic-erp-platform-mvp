@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Resolve version from tag
+        id: version
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          echo "version=${VER}" >> "$GITHUB_OUTPUT"
+
+      - name: Build solutions
+        run: make build
+
+      - name: Build service images
+        run: make build-images VERSION=${{ steps.version.outputs.version }}
+
+      - name: Run MCP cross-service integration tests against the stack
+        run: |
+          docker compose up -d --build --wait
+          MCP_BASE_URL=http://localhost:8082 make test-integration
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+
+      - name: Package image tarballs
+        run: |
+          mkdir -p images
+          V=${{ steps.version.outputs.version }}
+          for img in agent-service mcp-service erp-acl-service rag-service; do
+            echo "Exporting $img:$V ..."
+            docker save "$img:$V" | gzip > "images/$img.tar.gz"
+          done
+
+      - name: Create GitHub release with image assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "agentic-erp-platform-mvp v${{ steps.version.outputs.version }}"
+          files: images/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

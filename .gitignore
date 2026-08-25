@@ -55,3 +55,38 @@ scripts/
 TestResult.xml
 nunit-*.xml
 
+# CocoIndex Code (ccc)
+/.cocoindex_code/
+
+# CocoIndex
+.cocoindex/
+.cocoindex_code/
+
+# Embedding caches
+*.faiss
+*.ann
+*.index
+*.embeddings
+
+# Local semantic databases
+*.sqlite
+*.sqlite3
+
+# MCP local runtime
+.mcp/
+
+# Ollama local models
+.ollama/
+
+# Temporary AI caches
+.ai-cache/
+.semantic-cache/
+
+# VSCode local MCP config
+.vscode/mcp.json
+
+# stryker (mutation test)
+.stryker-tmp/
+reports/mutation/*
+!reports/mutation/
+!reports/mutation/mutation.json

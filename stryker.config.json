@@ -1,0 +1,91 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "StrykerJS configuration for mutation testing",
+
+  "testRunner": "jest",
+  "testRunnerNodeArgs": ["--experimental-vm-modules"],
+
+  "coverageAnalysis": "perTest",
+
+  "mutate": [
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "!src/**/*.test.js",
+    "!src/**/*.spec.js",
+    "!src/**/*.test.ts",
+    "!src/**/*.spec.ts",
+    "!src/**/__tests__/**",
+    "!src/**/__mocks__/**",
+    "!src/**/index.js",
+    "!src/**/index.ts"
+  ],
+
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "reports/**",
+    "logs/**"
+  ],
+
+  "reporters": ["html", "clear-text", "progress", "json"],
+
+  "htmlReporter": {
+    "fileName": "reports/mutation/html/index.html"
+  },
+
+  "jsonReporter": {
+    "fileName": "reports/mutation/mutation.json"
+  },
+
+  "clearTextReporter": {
+    "allowConsoleColors": true,
+    "logLevel": "info"
+  },
+
+  "thresholds": {
+    "high": 80,
+    "low": 70,
+    "break": 60
+  },
+
+  "concurrency": 4,
+
+  "timeoutMS": 5000,
+
+  "timeoutFactor": 2,
+
+  "plugins": ["@stryker-mutator/jest-runner", "./stryker/logger-ignorer.js"],
+
+  "ignorers": ["loggerCallExpression"],
+
+  "jest": {
+    "projectType": "custom",
+    "configFile": "jest.config.json"
+  },
+
+  "mutator": {
+    "excludedMutations": [
+      "StringLiteral",
+      "BooleanLiteral",
+      "ArrayDeclaration",
+      "ObjectLiteral"
+    ]
+  },
+
+  "tempDirName": ".stryker-tmp",
+
+  "cleanTempDir": true,
+
+  "commandRunner": {
+    "command": "npm test"
+  },
+
+  "dashboard": {
+    "project": "msxbas2rom-debugger",
+    "version": "0.3.4"
+  }
+}
