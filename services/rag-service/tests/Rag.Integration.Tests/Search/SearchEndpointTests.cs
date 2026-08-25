@@ -29,11 +29,11 @@ public class SearchEndpointTests : IClassFixture<WebApplicationFactory<Program>>
             correlation_id = "CORR-SEARCH-001",
             erp_snapshot_version = "2026.02",
             max_source_age_days = 30
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var json = await response.Content.ReadFromJsonAsync<JsonObject>();
+        var json = await response.Content.ReadFromJsonAsync<JsonObject>(TestContext.Current.CancellationToken);
 
         Assert.NotNull(json);
         Assert.Equal("order.create", json!["operation_context"]?.GetValue<string>());
@@ -65,11 +65,11 @@ public class SearchEndpointTests : IClassFixture<WebApplicationFactory<Program>>
         {
             operation_context = "",
             correlation_id = "CORR-INVALID-001"
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
-        var json = await response.Content.ReadFromJsonAsync<JsonObject>();
+        var json = await response.Content.ReadFromJsonAsync<JsonObject>(TestContext.Current.CancellationToken);
 
         Assert.NotNull(json);
         Assert.Equal("validation_error", json!["error"]?.GetValue<string>());
@@ -83,11 +83,11 @@ public class SearchEndpointTests : IClassFixture<WebApplicationFactory<Program>>
             operation_context = "inventory.transfer",
             correlation_id = "CORR-UNKNOWN-001",
             erp_snapshot_version = "2026.02"
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var json = await response.Content.ReadFromJsonAsync<JsonObject>();
+        var json = await response.Content.ReadFromJsonAsync<JsonObject>(TestContext.Current.CancellationToken);
 
         Assert.NotNull(json);
         Assert.Equal("unknown", json!["consistency"]?["status"]?.GetValue<string>());

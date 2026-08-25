@@ -45,9 +45,11 @@ public class CancelInvoiceUseCaseTests
             .Setup(g => g.GetById(It.IsAny<string>()))
             .Returns((Invoice?)null);
 
-        Assert.Throws<InvalidOperationException>(() =>
+        var exception = Assert.Throws<InvalidOperationException>(() =>
             _useCase.Execute("INV-404", "Reason")
         );
+
+        Assert.Contains("not found", exception.Message);
     }
 
     [Fact]
@@ -63,17 +65,21 @@ public class CancelInvoiceUseCaseTests
             .Setup(g => g.GetById("INV-002"))
             .Returns(invoice);
 
-        Assert.Throws<InvalidOperationException>(() =>
+        var exception = Assert.Throws<InvalidOperationException>(() =>
             _useCase.Execute("INV-002", "Reason")
         );
+
+        Assert.Contains("cancelled", exception.Message);
     }
 
     [Fact]
     public void Should_Throw_When_Reason_Is_Empty()
     {
-        Assert.Throws<ArgumentException>(() =>
+        var exception = Assert.Throws<ArgumentException>(() =>
             _useCase.Execute("INV-001", "")
         );
+
+        Assert.Contains("reason", exception.Message);
     }
 }
 

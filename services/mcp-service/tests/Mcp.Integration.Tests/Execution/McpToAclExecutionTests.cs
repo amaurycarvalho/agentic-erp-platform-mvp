@@ -25,9 +25,9 @@ public class McpToAclExecutionTests
             total_amount = 250.75
         };
 
-        var response = await client.PostAsJsonAsync("/mcp/tools/erp.create_order/execute", request);
+        var response = await client.PostAsJsonAsync("/mcp/tools/erp.create_order/execute", request, TestContext.Current.CancellationToken);
 
-        var body = await response.Content.ReadAsStringAsync();
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         Assert.True(response.IsSuccessStatusCode, $"Unexpected status {(int)response.StatusCode}: {body}");
 
@@ -52,8 +52,8 @@ public class McpToAclExecutionTests
             reason = "Integration test"
         };
 
-        var response = await client.PostAsJsonAsync("/mcp/tools/erp.cancel_invoice/execute", request);
-        var body = await response.Content.ReadAsStringAsync();
+        var response = await client.PostAsJsonAsync("/mcp/tools/erp.cancel_invoice/execute", request, TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(422, (int)response.StatusCode);
 

@@ -28,8 +28,8 @@ public class McpResilienceExecutionTests
             total_amount = 50.0
         };
 
-        var response = await client.PostAsJsonAsync("/mcp/tools/erp.create_order/execute", request);
-        var body = await response.Content.ReadAsStringAsync();
+        var response = await client.PostAsJsonAsync("/mcp/tools/erp.create_order/execute", request, TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(503, (int)response.StatusCode);
 

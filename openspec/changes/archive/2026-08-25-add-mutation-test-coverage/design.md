@@ -55,6 +55,10 @@ The `ExecuteAsync` switch routes any non-`create_order`/`cancel_invoice` string 
 
 After adding tests: run `dotnet-stryker` for the agent-service only (`cd services/agent-service/tests/Agent.Application.Tests && dotnet-stryker`) and confirm K ≈ 72, S = 1 (mutant 85), score ≥ 60%. Keep `coverage-analysis: "off"` (xunit.v3 is incompatible with Stryker's coverage capture).
 
+### D5. Test runner must be pinned to MTP (`test-runner: "mtp"`)
+
+With xunit.v3, the default `vstest` runner produces false results (K 0 / S 73 — every mutant "survives" because the vstest test host does not observe test failures for mutated runs). The Microsoft Test Platform runner (preview) executes mutant runs correctly (K 72 / S 1, score 98.63%). All four service `stryker-config.json` files pin `test-runner: "mtp"`. Caveat: MTP is preview — results should be spot-checked (e.g., a manual `dotnet test` against one applied mutation).
+
 ## Risks / Trade-offs
 
 - [Keyword tests couple to message wording] → `DetectIntent` owns the keywords; changing wording requires updating these tests. Acceptable: they encode current behavior explicitly.

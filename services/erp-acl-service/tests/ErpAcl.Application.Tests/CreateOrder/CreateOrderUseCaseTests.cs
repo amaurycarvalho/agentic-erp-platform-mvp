@@ -46,9 +46,11 @@ public class CreateOrderUseCaseTests
             TotalAmount = 0
         };
 
-        Assert.Throws<ArgumentException>(() =>
+        var exception = Assert.Throws<ArgumentException>(() =>
             _useCase.Execute(order)
         );
+
+        Assert.Contains("greater than zero", exception.Message);
     }
 }
 

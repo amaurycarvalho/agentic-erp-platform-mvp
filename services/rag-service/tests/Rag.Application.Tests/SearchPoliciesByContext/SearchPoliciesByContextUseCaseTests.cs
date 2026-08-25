@@ -35,8 +35,10 @@ public class SearchPoliciesByContextUseCaseTests
         Assert.Equal("CORR-001", result.CorrelationId);
         Assert.Equal("fresh", result.Consistency.Status);
         Assert.Equal(2, result.Sources.Count);
+        Assert.Equal("GENERAL_COMPLIANCE", result.Sources.ElementAt(0).PolicyCode);
+        Assert.Equal("ORDER_APPROVAL", result.Sources.ElementAt(1).PolicyCode);
 
-        var orderPolicy = Assert.Single(result.Sources.Where(source => source.PolicyCode == "ORDER_APPROVAL"));
+        var orderPolicy = Assert.Single(result.Sources, source => source.PolicyCode == "ORDER_APPROVAL");
         Assert.Equal("2.0", orderPolicy.Version);
         Assert.DoesNotContain(result.Sources, source => source.PolicyCode == "INVOICE_CANCELLATION");
     }
@@ -79,11 +81,47 @@ public class SearchPoliciesByContextUseCaseTests
     {
         var useCase = BuildUseCase(new FakePolicyDocumentRepository([]));
 
-        await Assert.ThrowsAsync<RagValidationException>(() =>
+        var exception = await Assert.ThrowsAsync<RagValidationException>(() =>
             useCase.ExecuteAsync(
                 new RagSearchRequest("", null, null, 30),
                 requestId: "REQ-INVALID",
                 cancellationToken: CancellationToken.None));
+
+        Assert.Contains("operation_context", exception.Message);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public async Task Should_Throw_When_Max_Source_Age_Days_Is_Not_Positive(int maxSourceAgeDays)
+    {
+        var useCase = BuildUseCase(new FakePolicyDocumentRepository([]));
+
+        var exception = await Assert.ThrowsAsync<RagValidationException>(() =>
+            useCase.ExecuteAsync(
+                new RagSearchRequest("order.create", null, null, maxSourceAgeDays),
+                requestId: "REQ-INVALID",
+                cancellationToken: CancellationToken.None));
+
+        Assert.Contains("max_source_age_days", exception.Message);
+    }
+
+    [Fact]
+    public async Task Should_Return_Stale_When_Explicit_Window_Excludes_Sources()
+    {
+        var repository = new FakePolicyDocumentRepository(
+        [
+            new PolicyDocument("POL-WINDOW", "ORDER_APPROVAL", "1.0", "content", DateTimeOffset.UtcNow.AddDays(-10), ["order.create"], "2026.02")
+        ]);
+
+        var useCase = BuildUseCase(repository);
+
+        var result = await useCase.ExecuteAsync(
+            new RagSearchRequest("order.create", null, "2026.02", 5),
+            requestId: "REQ-WINDOW",
+            cancellationToken: CancellationToken.None);
+
+        Assert.Equal("stale", result.Consistency.Status);
     }
 
     private static SearchPoliciesByContextUseCase BuildUseCase(IPolicyDocumentRepository repository)

@@ -19,14 +19,20 @@ The agent-service mutation run (`make mutation`) reports a real score of 58.9% a
 ### New Capabilities
 
 - `agent-mutation-tests`: tests for `ProcessAgentCommandUseCase` that kill the surviving mutants, bringing the agent-service mutation score above the break threshold, plus the recording-logger test helper that makes log mutations observable.
+- `mcp-mutation-tests`: tests that kill the surviving mutants in the MCP service (catalog metadata, tool-execution logging, payload type validation), raising the mcp-service score above the 60% break threshold.
+- `erp-acl-mutation-tests`: tests that assert exception message content in the ERP-ACL use cases, killing the surviving message-string mutants.
+- `rag-mutation-tests`: tests that kill the surviving mutants in the RAG service (traceable-response ordering/excerpt, version comparison, search validation, consistency evaluation), raising the rag-service score above the 60% break threshold.
 
 ### Modified Capabilities
 
-- `mutation-testing`: add a requirement that the configured break/high/low thresholds are actually achievable and met by each service test suite, with the agent-service as the first enforced suite (scenarios for the survivor groups that must be killed).
+- `mutation-testing`: add a requirement that the configured break/high/low thresholds are actually achievable and met by each service test suite, with the agent, mcp, erp-acl and rag suites enforced (scenarios for the survivor groups that must be killed).
 
 ## Impact
 
 - `services/agent-service/tests/Agent.Application.Tests/ProcessAgentCommand/ProcessAgentCommandUseCaseTests.cs` — new test cases (message validation, financial validation boundaries, missing invoice id, intent keyword coverage, unsupported intent, log assertions).
 - `services/agent-service/tests/Agent.Application.Tests/` — new test helper for recording `ILogger<T>` calls.
+- `services/mcp-service/tests/Mcp.Application.Tests/` — new catalog metadata tests, `RecordingLogger<T>` helper, tool-execution log assertions, and payload type/message validation tests.
+- `services/erp-acl-service/tests/ErpAcl.Application.Tests/` — exception message assertions in the CancelInvoice and CreateOrder use-case tests.
+- `services/rag-service/tests/Rag.Application.Tests/` — new tests for `BuildTraceableResponseUseCase` (ordering/excerpt), `ResolveVersionedSourcesUseCase` (version comparison), search-request validation, and `ValidateConsistencyAgainstErpStateUseCase` (branches and detail messages).
 - `openspec/specs/mutation-testing/spec.md` — delta spec with the threshold-achievement requirement.
-- No production code changes; the mutation gate becomes achievable for the agent-service (other services are tracked as follow-up).
+- No production code changes; the mutation gate becomes achievable for the agent, mcp, erp-acl and rag services.

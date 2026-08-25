@@ -3,6 +3,7 @@
     "reporters": ["html", "json", "progress"],
     "thresholds": { "high": 80, "low": 70, "break": 60 },
     "project": "ErpAcl.Application.csproj",
-    "coverage-analysis": "off"
+    "coverage-analysis": "off",
+    "test-runner": "mtp"
   }
 }

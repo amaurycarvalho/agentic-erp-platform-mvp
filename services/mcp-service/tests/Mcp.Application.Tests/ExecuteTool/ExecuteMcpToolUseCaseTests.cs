@@ -25,7 +25,8 @@ public class ExecuteMcpToolUseCaseTests
             .Setup(g => g.CreateOrderAsync("CUST-001", 100.50m, It.IsAny<CancellationToken>()))
             .ReturnsAsync("ORD-001");
 
-        var useCase = BuildUseCase(gatewayMock.Object, new InMemoryMcpToolCatalog());
+        var logger = new RecordingLogger<ExecuteMcpToolUseCase>();
+        var useCase = BuildUseCase(gatewayMock.Object, new InMemoryMcpToolCatalog(), logger);
 
         var payload = JsonSerializer.Deserialize<JsonElement>("""
         { "customer_id": "CUST-001", "total_amount": 100.50 }
@@ -38,6 +39,7 @@ public class ExecuteMcpToolUseCaseTests
         Assert.Equal("erp.create_order", result.Tool);
         Assert.Contains("ORD-001", outputJson);
         gatewayMock.Verify(g => g.CreateOrderAsync("CUST-001", 100.50m, It.IsAny<CancellationToken>()), Times.Once);
+        Assert.Contains(logger.Entries, entry => entry.Template.Contains("Executing MCP tool"));
     }
 
     [Fact]
@@ -48,7 +50,8 @@ public class ExecuteMcpToolUseCaseTests
             .Setup(g => g.CancelInvoiceAsync("INV-001", "Customer request", It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        var useCase = BuildUseCase(gatewayMock.Object, new InMemoryMcpToolCatalog());
+        var logger = new RecordingLogger<ExecuteMcpToolUseCase>();
+        var useCase = BuildUseCase(gatewayMock.Object, new InMemoryMcpToolCatalog(), logger);
 
         var payload = JsonSerializer.Deserialize<JsonElement>("""
         { "invoice_id": "INV-001", "reason": "Customer request" }
@@ -61,6 +64,9 @@ public class ExecuteMcpToolUseCaseTests
         Assert.Equal("erp.cancel_invoice", result.Tool);
         Assert.Contains("true", outputJson, StringComparison.OrdinalIgnoreCase);
         gatewayMock.Verify(g => g.CancelInvoiceAsync("INV-001", "Customer request", It.IsAny<CancellationToken>()), Times.Once);
+
+        var successLog = Assert.Single(logger.Entries, entry => entry.Template.Contains("executed successfully with success"));
+        Assert.Contains(successLog.Args, arg => arg is true);
     }
 
     [Fact]
@@ -96,7 +102,8 @@ public class ExecuteMcpToolUseCaseTests
 
     private static ExecuteMcpToolUseCase BuildUseCase(
         IErpAclGateway gateway,
-        IMcpToolCatalog toolCatalog)
+        IMcpToolCatalog toolCatalog,
+        Microsoft.Extensions.Logging.ILogger<ExecuteMcpToolUseCase>? logger = null)
     {
         var getToolUseCase = new GetToolUseCase(toolCatalog);
         var validatePayloadUseCase = new ValidatePayloadUseCase();
@@ -105,6 +112,6 @@ public class ExecuteMcpToolUseCaseTests
             getToolUseCase,
             validatePayloadUseCase,
             gateway,
-            NullLogger<ExecuteMcpToolUseCase>.Instance);
+            logger ?? NullLogger<ExecuteMcpToolUseCase>.Instance);
     }
 }
