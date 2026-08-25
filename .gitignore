@@ -90,3 +90,7 @@ nunit-*.xml
 reports/mutation/*
 !reports/mutation/
 !reports/mutation/mutation.json
+
+# Test results / coverage (coverlet cobertura + trx)
+TestResults/
+coverage.cobertura.xml

@@ -207,8 +207,8 @@ Requisitos:
 make test
 ```
 
-Executa os testes unitários de todos os serviços (excluindo a integração MCP que
-exige stack ativa). Para validar a cadeia `agent -> mcp -> acl` ponta a ponta, suba
+Executa os testes unitários e coleta cobertura por serviço (exclui a integração MCP
+que exige stack ativa). Para validar a cadeia `agent -> mcp -> acl` ponta a ponta, suba
 a stack e rode a integração:
 
 ```bash
@@ -218,13 +218,40 @@ MCP_BASE_URL=http://localhost:8082 make test-integration
 
 #### Quality Gate
 
-Por enquanto o _quality gate_ é apenas de testes (`install` + `test`). Os demais
-controles (lint, segurança, complexidade, cobertura, mutação) serão incorporados
-em uma fase futura.
+O _quality gate_ executa lint + testes (com cobertura) + verificação de cobertura +
+métricas + segurança:
 
 ```bash
 make quality-gate
 ```
+
+Verificações individuais:
+
+```bash
+make lint               # formato/análise (dotnet format --verify-no-changes)
+make test               # testes + cobertura
+make coverage-check     # cobertura contra COVERAGE_THRESHOLD (default 80)
+make metrics            # linhas de código (LOC) por serviço
+make security           # pacotes vulnerables/deprecated/outdated + Semgrep SAST
+```
+
+Análise estática, complexidade, code smells, dívida técnica e rating de
+manutenibilidade são coordenados pelo **SonarCloud** no CI (com _Leak Period_
+sobre código novo e decoração de Pull Requests). A cobertura é encaminhada via
+`TestResults/**/coverage.cobertura.xml`.
+
+#### Mutation testing (opcional)
+
+O teste de mutação com **Stryker.NET** é manual e não entra no gate do CI:
+
+```bash
+make install-quality-tools
+make mutation
+```
+
+Os reportes de mutação são gerados com threshold `high/low/break` (`80/70/60`).
+
+Leve os reports disponíveis em `services/**/tests/**/StrykerOutput/**/reports/mutation-report.json` e `services/**/tests/**/StrykerOutput/**/reports/mutation-report.html` para análise do seu agente de codificação e solicite a criação de testes para matar os mutantes sobreviventes. Depois, rode o mutation testing novamente.
 
 ### Como Usar
 

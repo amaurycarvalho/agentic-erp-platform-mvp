@@ -24,8 +24,8 @@ jobs:
       - name: Install dependencies
         run: make install
 
-      - name: Run quality gate (test only)
-        run: make test
+      - name: Run quality gate (lint + test + coverage + metrics + security)
+        run: make quality-gate
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -33,3 +33,16 @@ jobs:
           name: test-results
           path: TestResults/
           if-no-files-found: warn
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          build: make build
+          args: >
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.cs.cobertura.reportsPaths=TestResults/**/coverage.cobertura.xml
+            -Dsonar.coverage.exclusions=**/*Tests/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
