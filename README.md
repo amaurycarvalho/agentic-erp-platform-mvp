@@ -246,9 +246,95 @@ make security           # pacotes vulnerables/deprecated/outdated + Semgrep SAST
 ```
 
 Análise estática, complexidade, code smells, dívida técnica e rating de
-manutenibilidade são coordenados pelo **SonarCloud** no CI (com _Leak Period_
-sobre código novo e decoração de Pull Requests). A cobertura é encaminhada via
-`TestResults/**/coverage.cobertura.xml`.
+manutenibilidade são coordenados pelo **SonarCloud** no CI, com um projeto por
+serviço (análise per-service), _Leak Period_ sobre código novo e decoração de
+Pull Requests. A cobertura é encaminhada via `TestResults/**/coverage.cobertura.xml`.
+
+> **Jobs no CI:** o job `sonarcloud` (SonarCloud) e o job `integration-test`
+> (integração MCP ponta a ponta) rodam **apenas em pull requests**. O job
+> `quality-gate` (lint + test + coverage + metrics + security) roda em push para
+> `main` e em pull requests.
+
+#### Análise SonarCloud no pipeline CI
+
+O SonarCloud requer a configuração dos secrets abaixo no Github:
+
+```
+SONAR_PROJECT_KEY_PREFIX
+SONAR_ORG
+SONAR_TOKEN
+```
+
+A chave do projeto no SonarCloud deverá seguir o padrão:
+
+```
+SONAR_PROJECT_KEY_PREFIX-service_name
+```
+
+Exemplo:
+
+```
+agentic-erp-agent-service
+agentic-erp-mcp-service
+agentic-erp-acl-service
+agentic-erp-rag-service
+```
+
+#### Análise SonarQube local (self-hosted)
+
+Para analisar os serviços localmente contra um servidor **SonarQube
+self-hosted** em execução (ex.: `http://localhost:9000`), instale o scanner e
+rode a análise per-service:
+
+```bash
+make sonar-install
+SONAR_TOKEN=<seu-token> make sonar-check
+```
+
+O `sonar-check` executa `begin → build + test (com cobertura) → end` para cada
+um dos quatro serviços, um projeto SonarQube por serviço (chave =
+`SONAR_PROJECT_KEY_PREFIX` + nome do serviço, ex.: `agentic-erp-agent-service`).
+
+##### Subindo um servidor SonarQube local (Docker Compose)
+
+O repositório inclui uma stack local reproduzível (SonarQube Community +
+PostgreSQL, com volumes persistentes) em `sonarqube/docker-compose.yml`,
+baseada na referência oficial da SonarSource e com o mesmo hardening
+(`read_only`, `tmpfs`, volumes nomeados). Fluxo completo:
+
+```bash
+make sonar-up        # sobe a stack e aguarda o SonarQube ficar pronto
+# 1) Acesse http://localhost:9000 e faça login com admin / admin
+# 2) Troque a senha no primeiro login (obrigatório)
+# 3) My Account -> Security -> Tokens -> Generate (token de um usuário admin)
+SONAR_TOKEN=<seu-token> make sonar-check   # analisa os 4 serviços
+make sonar-down      # para a stack preservando os volumes
+```
+
+Com um token de um usuário **admin**, os quatro projetos per-service (as chaves
+exibidas pelo `make sonar-up`, uma por serviço) são **criados automaticamente**
+na primeira análise.
+
+**Requisitos de host:**
+
+- **Linux:** o Elasticsearch embutido exige `vm.max_map_count` maior; aplique
+  `sudo sysctl -w vm.max_map_count=262144` (persista em `/etc/sysctl.conf`).
+- **Docker Desktop (Windows/Mac):** reserve pelo menos 2–4 GB de memória para o
+  engine (o compose define `SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true` para evitar
+  a falha do `max_map_count`, que não é diretamente configurável nesses hosts).
+- **Reset completo** (apaga dados da stack): `docker compose -f sonarqube/docker-compose.yml down -v`.
+- As credenciais `admin`/`admin` são padrão de desenvolvimento local — não use
+  em produção.
+
+Variáveis de ambiente:
+
+- `SONAR_HOST_URL` — URL do servidor SonarQube (default `http://localhost:9000`);
+- `SONAR_TOKEN` — token de autenticação (obrigatório);
+- `SONAR_PROJECT_KEY_PREFIX` — prefixo das chaves de projeto (default `agentic-erp-`).
+
+> O estado local do scanner (`/.sonarqube`) é ignorado pelo git. A análise local
+> usa os mesmos relatórios de cobertura cobertura (`TestResults/**/coverage.cobertura.xml`)
+> do `make test`, com exclusão de fontes de teste.
 
 #### Mutation testing (opcional)
 

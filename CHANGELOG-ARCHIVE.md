@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [1.0.2] - 2026-08-26
+
+### [2026-08-26-add-release-compose-file](openspec/changes/archive/2026-08-26-add-release-compose-file) Add a new compose file (e.g. `docker-compose.release.yml`) that runs the four services purely from the pre-built images (`image:` references to the release tags), without any `build:` blocks. It mirrors the ports, healthchecks, dependencies and network of the existing compose file.
+
+#### Added
+- Add a new compose file (e.g. `docker-compose.release.yml`) that runs the four services purely from the pre-built images (`image:` references to the release tags), without any `build:` blocks. It mirrors the ports, healthchecks, dependencies and network of the existing compose file.
+- Publish that compose file as an asset of the GitHub release, alongside the four image tarballs, in the tag-triggered release workflow.
+
+#### Changed
+- Update `README.md` to remove the inline `docker-compose.yml` listing from the "Para Usuários / Como Instalar" section.
+- Update `README.md` to add a short instruction telling users to download the compose file from the release and run it against the loaded images.
+- Bump the release to version `1.0.2`.
+
 ## [1.0.1] - 2026-08-25
 
 ### [2026-08-25-add-ci-release-pipeline](openspec/changes/archive/2026-08-25-add-ci-release-pipeline) Rewrite Makefile targets to be dotnet-native: `install` (restore), `test` (unit), `clean`, `build` (compile Release), and `build-images` (build the 4 service Docker images tagged with `VERSION`).
@@ -52,5 +65,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [1.0.0]: https://github.com/amaurycarvalho/agentic-erp-platform-mvp/releases/tag/v1.0.0
 [1.0.1]: https://github.com/amaurycarvalho/agentic-erp-platform-mvp/releases/tag/v1.0.1
+[1.0.2]: https://github.com/amaurycarvalho/agentic-erp-platform-mvp/releases/tag/v1.0.2
 
 See main [CHANGELOG](CHANGELOG.md) for newer releases.

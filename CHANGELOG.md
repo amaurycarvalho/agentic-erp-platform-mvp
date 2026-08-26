@@ -34,20 +34,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Formalize the tool contract versioning policy (incompatible changes require a new tool version).
 - Preserve the existing catalog-gating, validation, and error-taxonomy behavior.
 
-## [1.0.2] - 2026-08-26
+## [1.0.3] - 2026-08-26
 
-### [2026-08-26-add-release-compose-file](openspec/changes/archive/2026-08-26-add-release-compose-file) Add a new compose file (e.g. `docker-compose.release.yml`) that runs the four services purely from the pre-built images (`image:` references to the release tags), without any `build:` blocks. It mirrors the ports, healthchecks, dependencies and network of the existing compose file.
+### [2026-08-26-add-local-sonarqube-per-service](openspec/changes/archive/2026-08-26-add-local-sonarqube-per-service) SonarQube analysis is only available via SonarCloud in CI today, so developers cannot run an analysis locally without pushing to GitHub.
 
 #### Added
-- Add a new compose file (e.g. `docker-compose.release.yml`) that runs the four services purely from the pre-built images (`image:` references to the release tags), without any `build:` blocks. It mirrors the ports, healthchecks, dependencies and network of the existing compose file.
-- Publish that compose file as an asset of the GitHub release, alongside the four image tarballs, in the tag-triggered release workflow.
+- Add `sonar-install` Makefile target that installs the `dotnet-sonarscanner` global tool.
+- Add `sonar-check` Makefile target that runs a per-service SonarQube analysis against a self-hosted SonarQube server, looping over the four solutions, each wrapped in `begin` → build + test (coverage) → `end`, with all analysis parameters driven by environment variables (`SONAR_HOST_URL`, `SONAR_TOKEN`, `SONAR_PROJECT_KEY_PREFIX`).
 
 #### Changed
-- Update `README.md` to remove the inline `docker-compose.yml` listing from the "Para Usuários / Como Instalar" section.
-- Update `README.md` to add a short instruction telling users to download the compose file from the release and run it against the loaded images.
-- Bump the release to version `1.0.2`.
+- Adjust the SonarCloud CI job to analyze each service under its own per-service project key, still using the SonarCloud GitHub Action (not the local Makefile targets), and only on pull requests.
+- Ignore the SonarScanner local state directory (`.sonarqube/`) in `.gitignore`.
+- Document in `README.md`: how to run `sonar-install`/`sonar-check` for local analysis, and that the SonarCloud and integration-test jobs run in CI only on pull requests.
 
-[Unreleased]: https://github.com/amaurycarvalho/agentic-erp-platform-mvp/compare/v1.0.2...HEAD
-[1.0.2]: https://github.com/amaurycarvalho/agentic-erp-platform-mvp/releases/tag/v1.0.2
+#### Fixed
+- Fix the coverage report property to consume the existing cobertura reports (`sonar.cs.cobertura.reportsPaths`), not opencover, and exclude test sources (`sonar.coverage.exclusions=**/*Tests/**`).
+
+### [2026-08-26-add-sonarqube-docker-compose](openspec/changes/archive/2026-08-26-add-sonarqube-docker-compose) The local SonarQube workflow (`make sonar-check`) currently requires a self-hosted SonarQube server that developers must set up manually.
+
+#### Added
+- Add a `sonarqube/` folder containing a `docker-compose.yml` for SonarQube Community + PostgreSQL 17, following the official SonarSource reference (`sonarqube:community` image, hardened with `read_only: true`, `sonarqube_temp` volume and `tmpfs`, `container_name` `sonarqube`/`postgresql`, persistent named volumes, DB healthcheck + `depends_on` condition).
+- Add `make sonar-up` (start the SonarQube stack and wait until ready) and `make sonar-down` (stop it, preserving volumes) targets to the Makefile, wired into `.PHONY` and `help`.
+
+#### Changed
+- Update `README.md` so the "Análise SonarQube local" section documents the full developer flow: `make sonar-up` → first-login `admin`/`admin` (password change) → generate a token → `SONAR_TOKEN=<token> make sonar-check` → `make sonar-down`, plus host requirements (Linux `vm.max_map_count`, Docker Desktop memory).
+
+[Unreleased]: https://github.com/amaurycarvalho/agentic-erp-platform-mvp/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/amaurycarvalho/agentic-erp-platform-mvp/releases/tag/v1.0.3
 
 See [CHANGELOG Archive](CHANGELOG-ARCHIVE.md) for older releases.

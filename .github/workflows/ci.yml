@@ -42,6 +42,18 @@ jobs:
   sonarcloud:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - name: agent-service
+            sln: services/agent-service/Agent.sln
+          - name: mcp-service
+            sln: services/mcp-service/Mcp.sln
+          - name: erp-acl-service
+            sln: services/erp-acl-service/ErpAcl.sln
+          - name: rag-service
+            sln: services/rag-service/Rag.sln
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -54,17 +66,22 @@ jobs:
       - name: Install SonarCloud scanner
         run: dotnet tool install --global dotnet-sonarscanner
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          args: >
-            -Dsonar.organization=${{ secrets.SONAR_ORG }}
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.cs.cobertura.reportsPaths=TestResults/**/coverage.cobertura.xml
-            -Dsonar.coverage.exclusions=**/*Tests/**
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud begin
+        run: |
+          dotnet sonarscanner begin \
+            /k:"${{ secrets.SONAR_PROJECT_KEY_PREFIX }}-${{ matrix.service.name }}" \
+            /d:sonar.host.url=https://sonarcloud.io \
+            /d:sonar.organization="${{ secrets.SONAR_ORG }}" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.cs.cobertura.reportsPaths=TestResults/**/coverage.cobertura.xml \
+            /d:sonar.coverage.exclusions=**/*Tests/**
+
+      - name: Build and test with coverage
+        run: make test-sln SLN="${{ matrix.service.sln }}"
+
+      - name: SonarCloud end
+        if: always()
+        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
   integration-test:
     runs-on: ubuntu-latest

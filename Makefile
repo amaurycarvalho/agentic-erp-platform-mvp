@@ -1,14 +1,14 @@
 # Makefile
 # Dotnet-native build/test/release + quality tooling for the agentic-erp-platform-mvp.
 
-.PHONY: install test test-integration clean build build-images \
+.PHONY: install test test-sln test-integration clean build build-images \
         lint metrics coverage coverage-check security mutation \
-        install-quality-tools quality-gate help
+        install-quality-tools sonar-install sonar-up sonar-down sonar-check quality-gate help
 
 # ---------- Variables ----------
 
 # Single source of truth for image and release version.
-VERSION ?= 1.0.2
+VERSION ?= 1.0.3
 
 # Coverage floor (start lower and tighten). Measured baseline: 83-94% per solution.
 COVERAGE_THRESHOLD ?= 80
@@ -47,16 +47,20 @@ install:
 test:
 	@echo "$(GREEN)🧪 Running unit tests + coverage (excluding live-stack MCP integration)...$(NC)"
 	@for sln in $(SOLUTIONS); do \
-		name="$$(basename "$$sln" .sln)"; \
-		echo "  -> dotnet test $$sln"; \
-		dotnet test "$$sln" \
-			--filter "Category!=Mcp.Integration" \
-			--results-directory "TestResults/$$name" \
-			--collect:"XPlat Code Coverage" \
-			--settings CodeCoverage.runsettings \
-			--logger "trx;LogFileName=results.trx" || exit 1; \
+		echo "  -> test-sln SLN=$$sln"; \
+		$(MAKE) test-sln SLN="$$sln" || exit 1; \
 	done
 	@echo "$(GREEN)✅ Tests passed$(NC)"
+
+test-sln:
+	@name="$$(basename "$(SLN)" .sln)"; \
+	echo "  -> dotnet test $(SLN)"; \
+	dotnet test "$(SLN)" \
+		--filter "Category!=Mcp.Integration" \
+		--results-directory "TestResults/$$name" \
+		--collect:"XPlat Code Coverage" \
+		--settings CodeCoverage.runsettings \
+		--logger "trx;LogFileName=results.trx" || exit 1
 
 test-integration:
 	@echo "$(GREEN)🔗 Running MCP cross-service integration tests (requires a running stack via MCP_BASE_URL)...$(NC)"
@@ -113,6 +117,12 @@ image-mcp-service:
 		-f services/mcp-service/Dockerfile .
 
 # ---------- Quality targets ----------
+
+# SonarQube local analysis (self-hosted server; see `make sonar-check`).
+SONAR_HOST_URL ?= http://localhost:9000
+SONAR_TOKEN ?=
+SONAR_PROJECT_KEY_PREFIX ?= agentic-erp-
+SONAR_COMPOSE_FILE ?= sonarqube/docker-compose.yml
 
 lint:
 	@echo "$(GREEN)🔍 Lint (dotnet format --verify-no-changes)...$(NC)"
@@ -174,6 +184,49 @@ install-quality-tools:
 	@if ! command -v semgrep >/dev/null 2>&1; then python3 -m pip install --user semgrep; fi
 	@echo "$(GREEN)✅ Quality tools installed (dotnet-stryker + semgrep; dotnet-format bundled)$(NC)"
 
+sonar-install:
+	@echo "$(GREEN)📡 Installing dotnet-sonarscanner (global tool)...$(NC)"
+	@dotnet tool install --global dotnet-sonarscanner
+	@echo "$(GREEN)✅ dotnet-sonarscanner installed$(NC)"
+
+sonar-up:
+	@echo "$(GREEN)🐳 Starting local SonarQube stack ($(SONAR_COMPOSE_FILE))...$(NC)"
+	@docker-compose -f $(SONAR_COMPOSE_FILE) up -d
+	@echo "$(GREEN)✅ SonarQube ready at $(SONAR_HOST_URL)$(NC)"
+	@echo "  - First login: admin / admin  (change the password on first login!)"
+	@echo "  - Generate an analysis token: My Account -> Security -> Tokens (as admin, projects are auto-created)"
+	@echo "  - Then run: SONAR_TOKEN=<token> make sonar-check"
+	@echo "  - Per-service project keys:"
+	@for sln in $(SOLUTIONS); do \
+		echo "      $(SONAR_PROJECT_KEY_PREFIX)-$$(basename "$$sln" .sln)"; \
+	done
+
+sonar-down:
+	@echo "$(GREEN)🐳 Stopping local SonarQube stack (volumes preserved)...$(NC)"
+	@docker-compose -f $(SONAR_COMPOSE_FILE) down
+	@echo "$(GREEN)✅ SonarQube stopped (data persists; full reset: docker compose -f $(SONAR_COMPOSE_FILE) down -v)$(NC)"
+
+sonar-check:
+	@test -n "$(SONAR_TOKEN)" || { echo "$(RED)❌ SONAR_TOKEN is required - export it (e.g. SONAR_TOKEN=xxx make sonar-check)$(NC)"; exit 1; }
+	@for sln in $(SOLUTIONS); do \
+		name="$$(basename "$$sln" .sln)"; \
+		key="$(SONAR_PROJECT_KEY_PREFIX)-$$name"; \
+		echo "$(GREEN)📡 SonarQube analysis: $$key -> $(SONAR_HOST_URL)$(NC)"; \
+		( \
+			trap 'dotnet sonarscanner end /d:sonar.token="$(SONAR_TOKEN)"' EXIT; \
+			dotnet sonarscanner begin /k:"$$key" \
+				/d:sonar.host.url="$(SONAR_HOST_URL)" \
+				/d:sonar.token="$(SONAR_TOKEN)" \
+				/v:"$(VERSION)" \
+				/d:sonar.cs.cobertura.reportsPaths="TestResults/$$name/**/coverage.cobertura.xml" \
+				/d:sonar.coverage.exclusions="**/*Tests/**" || exit 1; \
+			$(MAKE) test-sln SLN="$$sln" || exit 1; \
+		); \
+		status=$$?; \
+		if [ $$status -ne 0 ]; then exit $$status; fi; \
+	done
+	@echo "$(GREEN)✅ SonarQube analysis complete$(NC)"
+
 # ---------- Quality gate ----------
 # Lint + test(coverage) + coverage-check + metrics + security.
 # Mutation (Stryker.NET) is excluded and run manually via `make mutation`.
@@ -207,6 +260,10 @@ help:
 	@echo "  make security         - Check package vulnerabilities/deprecated/outdated + Semgrep SAST"
 	@echo "  make mutation         - Run Stryker.NET mutation tests (manual, not in CI)"
 	@echo "  make install-quality-tools - Install dotnet-stryker + semgrep"
+	@echo "  make sonar-install    - Install the dotnet-sonarscanner global tool"
+	@echo "  make sonar-up          - Start the local SonarQube stack (docker compose up --wait)"
+	@echo "  make sonar-down        - Stop the local SonarQube stack (volumes preserved)"
+	@echo "  make sonar-check      - Run per-service SonarQube analysis (needs SONAR_TOKEN; SONAR_HOST_URL default http://localhost:9000)"
 	@echo "  make quality-gate     - Run the quality gate (lint + test + coverage + metrics + security)"
 	@echo "  make help             - Show this help message"
 	@echo ""
@@ -214,3 +271,4 @@ help:
 	@echo "  make build-images VERSION=2.0.0"
 	@echo "  MCP_BASE_URL=http://localhost:8082 make test-integration"
 	@echo "  COVERAGE_THRESHOLD=90 make coverage-check"
+	@echo "  SONAR_TOKEN=xxx SONAR_HOST_URL=http://localhost:9000 make sonar-check"

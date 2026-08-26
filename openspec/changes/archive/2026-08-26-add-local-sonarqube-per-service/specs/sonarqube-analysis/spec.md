@@ -1,9 +1,9 @@
 # sonarqube-analysis Specification
 
 ## Purpose
-SonarCloud analysis of the four service solutions in CI, each under its own per-service project key, with pull-request decoration and a new-code (Leak Period) quality gate. The analysis runs only on pull requests, alongside the MCP integration-test job, while the quality-gate job runs on push to `main` and on pull requests.
+Delta spec for the sonarqube-analysis capability: SonarCloud analysis becomes per-service, CI uses the SonarCloud GitHub Action (not the Makefile-local flow) and runs only on pull requests.
 
-## Requirements
+## MODIFIED Requirements
 ### Requirement: SonarCloud analysis of all service solutions
 
 The CI workflow SHALL analyze every service solution (agent, mcp, erp-acl, rag) under its own per-service SonarCloud project key and publish the results to SonarCloud, so issues (bugs, code smells, vulnerabilities, security hotspots, duplicated lines, technical debt) are captured per service.

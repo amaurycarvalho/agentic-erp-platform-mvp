@@ -95,3 +95,6 @@ reports/mutation/*
 # Test results / coverage (coverlet cobertura + trx)
 TestResults/
 coverage.cobertura.xml
+
+# SonarQube scanner local state
+.sonarqube/
