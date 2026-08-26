@@ -4,7 +4,7 @@ description: Push the current release to GitHub by creating a tag and release br
 license: MIT
 metadata:
   author: amaurycarvalho
-  version: "1.1"
+  version: "1.2"
 ---
 
 Push the current release to the remote repository: create a git tag, push tags, create a release branch, push it, and switch back to `main`.
@@ -15,7 +15,15 @@ The version is read automatically from `VERSION` in the `Makefile` (the single s
 
 1. **Verify if release's changes are all archived**
 
-   Confirm if all of the changes in this release are archived. The release consists of the active OpenSpec changes — the directories directly under `openspec/changes/` (excluding `archive`). A change is archived when it was moved to `openspec/changes/archive/` (e.g. `YYYY-MM-DD-<change-name>`). Stop and report the error without proceeding if any of them is not archived yet.
+   Confirm if all of the changes belonging to the release being pushed are archived. Only the changes of the version being pushed are checked — active changes under `## [Unreleased]` do NOT block the release.
+
+   a. **Read the release version** from `VERSION` in the `Makefile` (e.g. `1.0.1`).
+
+   b. **Identify the release's changes** from `CHANGELOG.md`: find the `## [<version>] -` heading and collect every `### [<change-name>](...)` entry under it (until the next `## [` heading or EOF). Entries under `## [Unreleased]` do NOT belong to this release and must be ignored. If no `## [<version>]` heading exists, report an error and STOP.
+
+   c. **Confirm each release change is archived**: a directory named `<change-name>` exists under `openspec/changes/archive/` (e.g. `openspec/changes/archive/YYYY-MM-DD-<change-name>`).
+
+   d. Stop and report the error without proceeding if any of the release's changes is not archived yet.
 
 **Output On Success**
 
