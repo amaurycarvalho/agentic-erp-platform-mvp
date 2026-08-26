@@ -4,18 +4,18 @@ description: Push the current release to GitHub by creating a tag and release br
 license: MIT
 metadata:
   author: amaurycarvalho
-  version: "1.0"
+  version: "1.1"
 ---
 
-Push the current release to the remote repository: create a git tag, push tags, create a release branch, push it, and switch back to master.
+Push the current release to the remote repository: create a git tag, push tags, create a release branch, push it, and switch back to `main`.
 
-The version is read automatically from `__version__` in `src/b3_selic_pre/__init__.py`.
+The version is read automatically from `VERSION` in the `Makefile` (the single source of truth for image and release version, e.g. `VERSION ?= 1.0.0`).
 
 **Steps**
 
 1. **Verify if release's changes are all archived**
 
-   Confirm if all of the changes in this release is archived (see `CHANGELOG.md` for the list). Stop and report the error without proceeding if any of them is not archived yet.
+   Confirm if all of the changes in this release are archived. The release consists of the active OpenSpec changes — the directories directly under `openspec/changes/` (excluding `archive`). A change is archived when it was moved to `openspec/changes/archive/` (e.g. `YYYY-MM-DD-<change-name>`). Stop and report the error without proceeding if any of them is not archived yet.
 
 **Output On Success**
 
@@ -33,7 +33,7 @@ ERROR: Change <change-name> not archived yet.
 2. **Run the release script**
 
    Execute the bash script located at `.opencode/skills/release-push/release-push.sh`. This script:
-   - Reads the version from `src/b3_selic_pre/__init__.py`
+   - Reads the version from `VERSION` in the `Makefile`
    - Creates the git tag `v<version>`
    - Pushes tags to origin
    - Creates and pushes a `release/v<version>` branch
@@ -54,7 +54,7 @@ ERROR: Change <change-name> not archived yet.
 **Output On Error**
 
 ```
-ERROR: Could not extract version from src/b3_selic_pre/__init__.py.
+ERROR: Could not extract version from Makefile.
 ```
 
 **Guardrails**

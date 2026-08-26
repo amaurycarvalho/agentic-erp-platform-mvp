@@ -40,7 +40,8 @@ ScaffoldingReadMe.txt
 ~$*
 *~
 CodeCoverage/
-scripts/
+scripts/*
+!scripts/coverage_check.py
 .env
 
 # MSBuild Binary and Structured Log
