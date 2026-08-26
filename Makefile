@@ -8,7 +8,7 @@
 # ---------- Variables ----------
 
 # Single source of truth for image and release version.
-VERSION ?= 1.0.1
+VERSION ?= 1.0.2
 
 # Coverage floor (start lower and tighten). Measured baseline: 83-94% per solution.
 COVERAGE_THRESHOLD ?= 80

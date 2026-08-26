@@ -141,8 +141,18 @@ A forma mais simples é usar as imagens de container publicadas nas
 [Releases](https://github.com/amaurycarvalho/agentic-erp-platform-mvp/releases):
 
 1. Baixe os tarballs dos serviços desejados (`*-service.tar.gz`);
-2. Carregue cada um com `docker load`;
-3. Suba a stack com `docker-compose up -d` (referenciando as imagens carregadas).
+2. Baixe também o `docker-compose.release.yml` da mesma Release;
+3. Carregue cada tarball com `docker load` e retague a imagem para `latest`;
+4. Suba a stack com `docker-compose -f docker-compose.release.yml up -d`.
+
+```bash
+# Download: pegue os tarballs (*-service.tar.gz) e o docker-compose.release.yml da Release
+for img in agent-service mcp-service erp-acl-service rag-service; do
+  gunzip -c "$img.tar.gz" | docker load
+  docker tag "$img:<versão>" "$img:latest"
+done
+docker-compose -f docker-compose.release.yml up -d
+```
 
 Também é possível construir tudo do código-fonte:
 
