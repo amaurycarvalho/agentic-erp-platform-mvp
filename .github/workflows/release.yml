@@ -31,13 +31,6 @@ jobs:
       - name: Build service images
         run: make build-images VERSION=${{ steps.version.outputs.version }}
 
-      - name: Run MCP cross-service integration tests against the stack
-        run: |
-          docker compose up -d --build --wait
-          MCP_BASE_URL=http://localhost:8082 make test-integration
-        env:
-          ASPNETCORE_ENVIRONMENT: Production
-
       - name: Package image tarballs
         run: |
           mkdir -p images

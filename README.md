@@ -201,7 +201,7 @@ Requisitos:
 - .NET SDK 8.0
 - Docker (para `make build-images` e `docker-compose`)
 
-#### Testes
+#### Testes unitários
 
 ```bash
 make test
@@ -253,6 +253,16 @@ Os reportes de mutação são gerados com threshold `high/low/break` (`80/70/60`
 
 Leve os reports disponíveis em `services/**/tests/**/StrykerOutput/**/reports/mutation-report.json` e `services/**/tests/**/StrykerOutput/**/reports/mutation-report.html` para análise do seu agente de codificação e solicite a criação de testes para matar os mutantes sobreviventes. Depois, rode o mutation testing novamente.
 
+#### Testes de integração
+
+Ative os serviços com `Docker Compose`, configure a variável de ambiente com a url base e depois rode o teste.
+
+```bash
+sudo docker-compose up -d --build --timeout 120
+MCP_BASE_URL=http://localhost:8082 make test-integration
+sudo docker-compose down
+```
+
 ### Como Usar
 
 #### Docker Compose
@@ -260,7 +270,7 @@ Leve os reports disponíveis em `services/**/tests/**/StrykerOutput/**/reports/m
 Suba os serviços (constrói as imagens a partir dos `Dockerfile`):
 
 ```bash
-docker-compose up -d --build
+sudo docker-compose up -d --build
 ```
 
 Acesse via:
@@ -273,7 +283,7 @@ Acesse via:
 Derrube os serviços:
 
 ```bash
-docker-compose down
+sudo docker-compose down
 ```
 
 #### Usando Imagens Pré-compiladas

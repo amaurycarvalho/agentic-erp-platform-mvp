@@ -39,14 +39,49 @@ jobs:
           path: TestResults/
           if-no-files-found: warn
 
-#      - name: SonarCloud Scan
-#        uses: SonarSource/sonarcloud-github-action@v2
-#        with:
-#          args: >
-#            -Dsonar.organization=${{ secrets.SONAR_ORG }}
-#            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-#            -Dsonar.cs.cobertura.reportsPaths=TestResults/**/coverage.cobertura.xml
-#            -Dsonar.coverage.exclusions=**/*Tests/**
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  sonarcloud:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Install SonarCloud scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.cs.cobertura.reportsPaths=TestResults/**/coverage.cobertura.xml
+            -Dsonar.coverage.exclusions=**/*Tests/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  integration-test:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Run MCP cross-service integration tests against the stack
+        run: |
+          docker compose up -d --build --wait --wait-timeout 120
+          MCP_BASE_URL=http://localhost:8082 make test-integration
+          docker compose down
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
