@@ -53,6 +53,7 @@ test:
 			--filter "Category!=Mcp.Integration" \
 			--results-directory "TestResults/$$name" \
 			--collect:"XPlat Code Coverage" \
+			--settings CodeCoverage.runsettings \
 			--logger "trx;LogFileName=results.trx" || exit 1; \
 	done
 	@echo "$(GREEN)✅ Tests passed$(NC)"
@@ -63,6 +64,7 @@ test-integration:
 		--filter "Category=Mcp.Integration" \
 		--results-directory "TestResults/Mcp" \
 		--collect:"XPlat Code Coverage" \
+		--settings CodeCoverage.runsettings \
 		--logger "trx;LogFileName=results.trx" || exit 1
 	@echo "$(GREEN)✅ Integration tests passed$(NC)"
 

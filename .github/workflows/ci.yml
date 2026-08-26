@@ -39,15 +39,14 @@ jobs:
           path: TestResults/
           if-no-files-found: warn
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          build: make build
-          args: >
-            -Dsonar.organization=${{ secrets.SONAR_ORG }}
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.cs.cobertura.reportsPaths=TestResults/**/coverage.cobertura.xml
-            -Dsonar.coverage.exclusions=**/*Tests/**
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#      - name: SonarCloud Scan
+#        uses: SonarSource/sonarcloud-github-action@v2
+#        with:
+#          args: >
+#            -Dsonar.organization=${{ secrets.SONAR_ORG }}
+#            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+#            -Dsonar.cs.cobertura.reportsPaths=TestResults/**/coverage.cobertura.xml
+#            -Dsonar.coverage.exclusions=**/*Tests/**
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

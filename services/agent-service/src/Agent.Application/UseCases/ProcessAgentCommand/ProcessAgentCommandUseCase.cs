@@ -4,12 +4,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Agent.Application.UseCases.ProcessAgentCommand;
 
-public sealed class ProcessAgentCommandUseCase(
+public sealed partial class ProcessAgentCommandUseCase(
     IMcpGateway mcpGateway,
     ILogger<ProcessAgentCommandUseCase> logger)
 {
     private readonly IMcpGateway _mcpGateway = mcpGateway;
     private readonly ILogger<ProcessAgentCommandUseCase> _logger = logger;
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Calling MCP tool {ToolName} inferred from user request")]
+    private partial void LogCallingMcpTool(string toolName);
 
     public async Task<AgentCommandResult> ExecuteAsync(
         AgentCommandRequest request,
@@ -50,7 +55,7 @@ public sealed class ProcessAgentCommandUseCase(
             total_amount = request.TotalAmount.Value
         };
 
-        _logger.LogInformation("Calling MCP tool {ToolName} inferred from user request", "erp.create_order");
+        LogCallingMcpTool("erp.create_order");
 
         var output = await _mcpGateway.ExecuteToolAsync("erp.create_order", payload, cancellationToken);
         var parsedOutput = JsonSerializer.Deserialize<object>(output.GetRawText())!;
@@ -78,7 +83,7 @@ public sealed class ProcessAgentCommandUseCase(
             reason = request.Reason
         };
 
-        _logger.LogInformation("Calling MCP tool {ToolName} inferred from user request", "erp.cancel_invoice");
+        LogCallingMcpTool("erp.cancel_invoice");
 
         var output = await _mcpGateway.ExecuteToolAsync("erp.cancel_invoice", payload, cancellationToken);
         var parsedOutput = JsonSerializer.Deserialize<object>(output.GetRawText())!;

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Mcp.Application.UseCases.ExecuteTool;
 
-public sealed class ExecuteMcpToolUseCase(
+public sealed partial class ExecuteMcpToolUseCase(
     GetToolUseCase getToolUseCase,
     ValidatePayloadUseCase validatePayloadUseCase,
     IErpAclGateway erpAclGateway,
@@ -17,6 +17,21 @@ public sealed class ExecuteMcpToolUseCase(
     private readonly IErpAclGateway _erpAclGateway = erpAclGateway;
     private readonly ILogger<ExecuteMcpToolUseCase> _logger = logger;
 
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "Executing MCP tool {ToolName}")]
+    private partial void LogExecutingMcpTool(string toolName);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "MCP tool {ToolName} executed successfully with order_id {OrderId}")]
+    private partial void LogToolExecutedWithOrderId(string toolName, string orderId);
+
+    [LoggerMessage(
+        Level = LogLevel.Information,
+        Message = "MCP tool {ToolName} executed successfully with success {Success}")]
+    private partial void LogToolExecutedWithSuccess(string toolName, bool success);
+
     public async Task<McpToolExecutionResult> ExecuteAsync(
         string toolName,
         JsonElement payload,
@@ -25,7 +40,7 @@ public sealed class ExecuteMcpToolUseCase(
         var tool = _getToolUseCase.Execute(toolName);
         _validatePayloadUseCase.Execute(tool, payload);
 
-        _logger.LogInformation("Executing MCP tool {ToolName}", tool.Name);
+        LogExecutingMcpTool(tool.Name);
 
         return tool.Name switch
         {
@@ -45,7 +60,7 @@ public sealed class ExecuteMcpToolUseCase(
 
         var orderId = await _erpAclGateway.CreateOrderAsync(customerId, totalAmount, cancellationToken);
 
-        _logger.LogInformation("MCP tool {ToolName} executed successfully with order_id {OrderId}", toolName, orderId);
+        LogToolExecutedWithOrderId(toolName, orderId);
 
         return new McpToolExecutionResult(
             Tool: toolName,
@@ -62,7 +77,7 @@ public sealed class ExecuteMcpToolUseCase(
 
         var success = await _erpAclGateway.CancelInvoiceAsync(invoiceId, reason, cancellationToken);
 
-        _logger.LogInformation("MCP tool {ToolName} executed successfully with success {Success}", toolName, success);
+        LogToolExecutedWithSuccess(toolName, success);
 
         return new McpToolExecutionResult(
             Tool: toolName,
