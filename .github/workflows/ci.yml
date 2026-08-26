@@ -24,6 +24,11 @@ jobs:
       - name: Install dependencies
         run: make install
 
+      - name: Install Semgrep (SAST)
+        run: |
+          python3 -m pip install --user semgrep
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
       - name: Run quality gate (lint + test + coverage + metrics + security)
         run: make quality-gate
 

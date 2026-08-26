@@ -53,5 +53,6 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: "agentic-erp-platform-mvp v${{ steps.version.outputs.version }}"
           files: images/*.tar.gz
+          body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

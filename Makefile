@@ -8,7 +8,7 @@
 # ---------- Variables ----------
 
 # Single source of truth for image and release version.
-VERSION ?= 1.0.0
+VERSION ?= 1.0.1
 
 # Coverage floor (start lower and tighten). Measured baseline: 83-94% per solution.
 COVERAGE_THRESHOLD ?= 80
@@ -151,7 +151,11 @@ security:
 		(cd "$$dir" && dotnet list package --outdated); \
 	done
 	@echo "  -> semgrep (C# source)..."
-	@semgrep ci --oss-only --quiet --config auto --include '*.cs' || exit 1
+	@if command -v semgrep >/dev/null 2>&1; then \
+		semgrep ci --oss-only --quiet --config auto --include '*.cs' || exit 1; \
+	else \
+		echo "$(YELLOW)⚠️ semgrep not found - skipping SAST scan (run 'make install-quality-tools')$(NC)"; \
+	fi
 	@echo "$(GREEN)✅ Security scan complete$(NC)"
 
 mutation:
